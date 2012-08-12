@@ -41,7 +41,7 @@
 						<exclude>jtidy:jtidy</exclude>
 					</classpathExcludes>
 					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
-					<eclipseProjectName>mobicents-slee-enabler-sip-subscription-client</eclipseProjectName>
+					<eclipseProjectName>slee-enabler-sip-subscription-client</eclipseProjectName>
 				</configuration>
 			</plugin>
 		</plugins>

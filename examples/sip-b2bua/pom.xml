@@ -36,7 +36,7 @@
 						<exclude>jtidy:jtidy</exclude>
 					</classpathExcludes>
 					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
-					<eclipseProjectName>mobicents-slee-example-sip-b2bua</eclipseProjectName>
+					<eclipseProjectName>slee-example-sip-b2bua</eclipseProjectName>
 				</configuration>
 			</plugin>
 		</plugins>		

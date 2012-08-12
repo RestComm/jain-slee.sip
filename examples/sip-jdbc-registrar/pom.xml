@@ -50,7 +50,7 @@
 						<exclude>jtidy:jtidy</exclude>
 					</classpathExcludes>
 					<resolveTransitiveDependencies>true</resolveTransitiveDependencies>
-					<eclipseProjectName>mobicents-slee-example-sip-jdbc-registrar</eclipseProjectName>
+					<eclipseProjectName>slee-example-sip-jdbc-registrar</eclipseProjectName>
 				</configuration>
 			</plugin>
 		</plugins>		
