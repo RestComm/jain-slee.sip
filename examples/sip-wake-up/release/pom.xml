@@ -27,18 +27,18 @@
 								</goals>
 								<configuration>
 									<tasks>
-    								<copy overwrite="true" todir="${basedir}/../../../release/${release.name}/examples/sip-wake-up">
+    								<copy overwrite="true" todir="${release.dir}/examples/sip-wake-up">
     									<fileset dir="${basedir}/../du/target">
     										<include name="**.jar" />
     										<include name="*.xml" />
     										<include name="*.properties" />										
     									</fileset>
     								</copy>
-    								<copy overwrite="true" todir="${basedir}/../../../release/${release.name}/examples/sip-wake-up/sipp">
+    								<copy overwrite="true" todir="${release.dir}/examples/sip-wake-up/sipp">
     									<fileset dir="${basedir}/../sipp" />
     								</copy>
-    								<copy overwrite="true" file="${basedir}/../du/target/build.xml" tofile="${basedir}/../../../release/${release.name}/examples/sip-wake-up/du-management.xml" />
-                    				<copy overwrite="true" file="${basedir}/build.xml" todir="${basedir}/../../../release/${release.name}/examples/sip-wake-up">
+    								<copy overwrite="true" file="${basedir}/../du/target/build.xml" tofile="${release.dir}/examples/sip-wake-up/du-management.xml" />
+                    				<copy overwrite="true" file="${basedir}/build.xml" todir="${release.dir}/examples/sip-wake-up">
     									<filterset>
     										<filter token="JBOSS.PATH" value="${jboss.path}" />
                       						<filter token="JBOSS.CONFIG" value="${node}" />

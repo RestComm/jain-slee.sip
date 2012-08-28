@@ -30,7 +30,7 @@
 								<configuration>
 									<tasks>
 										<!-- copy docs -->
-										<copy overwrite="true" todir="${basedir}/../../../../release/${release.name}/examples/sip-b2bua/docs">
+										<copy overwrite="true" todir="${release.dir}/docs/examples/sip-b2bua/user-guide">
 											<fileset dir="${basedir}/target/docbook/publish" />
 										</copy>
 									</tasks>

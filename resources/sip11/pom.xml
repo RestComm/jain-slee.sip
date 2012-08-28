@@ -96,22 +96,11 @@
 			
 	<profiles>
 		<profile>
-			<id>telscale</id>
-			<properties>
-				<docs.profile>telscale</docs.profile>
-			</properties>
-			<modules>
-				<module>docs</module>
-				<module>release</module>
-			</modules>
-		</profile>
-			
-		<profile>
 			<id>release</id>
 			<modules>
 				<module>docs</module>
 				<module>release</module>
-			</modules>
+			</modules>			
 		</profile>
 		<profile>
 			<id>maven-release</id>
