@@ -17,12 +17,7 @@
 		<module>sbb</module>						
 		<module>du</module>			
 	</modules>
-	
-	<properties>
-		<mobicents.resources.sip11.version>${project.version}</mobicents.resources.sip11.version>
-		<docs.profile>mobicents</docs.profile>
-	</properties>
-	
+		
 	<build>
 		<plugins>
 			<plugin>

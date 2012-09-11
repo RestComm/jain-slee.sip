@@ -14,7 +14,7 @@
 		<dependency>
 			<groupId>org.mobicents.resources</groupId>
 			<artifactId>sip11-ratype</artifactId>
-			<version>${mobicents.resources.sip11.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 				<groupId>org.mobicents.servers.jainslee.api</groupId>

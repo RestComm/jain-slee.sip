@@ -18,10 +18,6 @@
 		<module>du</module>			
 	</modules>
 	
-	<properties>
-		<mobicents.resources.sip11.version>${project.version}</mobicents.resources.sip11.version>
-	</properties>
-	
 	<build>
 		<plugins>
 			<plugin>
