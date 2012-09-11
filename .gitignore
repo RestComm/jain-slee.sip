@@ -23,3 +23,19 @@ target
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# SLEE
+enablers/sip-publication-client/docs/sources-mobicents/src/
+enablers/sip-publication-client/docs/sources-telscale/src/
+enablers/sip-subscription-client/docs/sources-mobicents/src/
+enablers/sip-subscription-client/docs/sources-telscale/src/
+examples/sip-b2bua/docs/sources-mobicents/src/
+examples/sip-b2bua/docs/sources-telscale/src/
+examples/sip-uas/docs/sources-mobicents/src/
+examples/sip-uas/docs/sources-telscale/src/
+resources/sip11/docs/sources-mobicents/src/
+resources/sip11/docs/sources-telscale/src/
+examples/sip-jdbc-registrar/docs/sources-mobicents/src/
+examples/sip-jdbc-registrar/docs/sources-telscale/src/
+examples/sip-wake-up/docs/sources-mobicents/src/
+examples/sip-wake-up/docs/sources-telscale/src/
