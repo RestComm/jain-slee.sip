@@ -25,6 +25,7 @@ ehthumbs.db
 Thumbs.db
 
 # SLEE
+${release.dir}
 enablers/sip-publication-client/docs/sources-mobicents/src/
 enablers/sip-publication-client/docs/sources-telscale/src/
 enablers/sip-subscription-client/docs/sources-mobicents/src/
