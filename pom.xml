@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.mobicents</groupId>
 		<artifactId>mobicents-parent</artifactId>
-		<version>6.1.1.GA-TelScale</version>
+		<version>6.1.2.GA-TelScale</version>
 	</parent>
 	
 	<groupId>org.mobicents.servers.jainslee.sip</groupId>
@@ -14,13 +14,7 @@
 	<packaging>pom</packaging>
 	
 	<modules>
-		<module>resources/sip11</module>
-		<module>enablers/sip-publication-client</module>
-		<module>enablers/sip-subscription-client</module>
-		<module>examples/sip-b2bua</module>			
-		<module>examples/sip-uas</module>			
-		<module>examples/sip-jdbc-registrar</module>			
-		<module>examples/sip-wake-up</module>
+		<!-- modules are defined on profiles -->
 	</modules>
 		
 	<scm>
@@ -31,7 +25,31 @@
 			
 	<profiles>
 		<profile>
+			<id>not-a-release</id>
+			<activation>
+		      <activeByDefault>true</activeByDefault>
+		    </activation>
+			<modules>
+				<module>resources/sip11</module>
+				<module>enablers/sip-publication-client</module>
+				<module>enablers/sip-subscription-client</module>
+				<module>examples/sip-b2bua</module>			
+				<module>examples/sip-uas</module>			
+				<module>examples/sip-jdbc-registrar</module>			
+				<module>examples/sip-wake-up</module>
+			</modules>				
+		</profile>
+		<profile>
 			<id>maven-release</id>
+			<modules>
+				<module>resources/sip11</module>
+				<module>enablers/sip-publication-client</module>
+				<module>enablers/sip-subscription-client</module>
+				<module>examples/sip-b2bua</module>			
+				<module>examples/sip-uas</module>			
+				<module>examples/sip-jdbc-registrar</module>			
+				<module>examples/sip-wake-up</module>
+			</modules>
 			<build>
 				<plugins>
 					<plugin>
@@ -45,7 +63,19 @@
 				</plugins>
 			</build>		
 		</profile>
-	</profiles>	
+		<profile>
+			<id>release</id>
+			<modules>
+				<module>resources/sip11</module>
+				<module>enablers/sip-publication-client</module>
+				<module>enablers/sip-subscription-client</module>
+				<module>examples/sip-b2bua</module>			
+				<module>examples/sip-uas</module>			
+				<module>examples/sip-jdbc-registrar</module>			
+				<module>examples/sip-wake-up</module>
+			</modules>			
+		</profile>
+	</profiles>		
 	
 	<!-- dupe info from parent, but it's only way to retrieve the parent without checkout -->
 

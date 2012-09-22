@@ -25,9 +25,9 @@
 
 	<properties>
 		<mobicents.slee.version>${project.version}</mobicents.slee.version>
-		<jsip.ha.version>6.1.1.GA-TelScale</jsip.ha.version>
-		<jsip.sip.ext.version>6.1.1.GA-TelScale</jsip.sip.ext.version>
-		<loadbalancer.version>6.1.1.GA-TelScale</loadbalancer.version>
+		<jsip.ha.version>6.1.2.GA-TelScale</jsip.ha.version>
+		<jsip.sip.ext.version>6.1.2.GA-TelScale</jsip.sip.ext.version>
+		<loadbalancer.version>6.1.2.GA-TelScale</loadbalancer.version>
 		<docs.ra.name>SIP11</docs.ra.name>
 		<docs.ra.dirname>sip11</docs.ra.dirname>
 		<docs.bookid>SIP11</docs.bookid>
