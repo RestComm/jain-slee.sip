@@ -15,6 +15,8 @@
 	
 	<modules>
 		<module>sources</module>		
+		<module>sources-telscale</module>
+		<module>jdocbook-telscale</module>
 	</modules>
 
 	<properties>
@@ -22,34 +24,5 @@
 		<docs.enabler.dirname>sip-subscription-client</docs.enabler.dirname>
 		<docs.bookid>SIPSubscriptionClient</docs.bookid>
 	</properties>
-	
-	<profiles>
-		<profile>
-			<id>mobicents</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>			
-			<modules>
-				<module>sources-mobicents</module>
-				<module>jdocbook-mobicents</module>				
-			</modules>
-		</profile>
-		<profile>
-			<id>telscale</id>
-			<modules>
-				<module>sources-telscale</module>
-				<module>jdocbook-telscale</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>maven-release</id>
-			<modules>
-				<module>sources-mobicents</module>
-				<module>jdocbook-mobicents</module>
-				<module>sources-telscale</module>
-				<module>jdocbook-telscale</module>
-			</modules>
-		</profile>
-	</profiles>
 
 </project>
