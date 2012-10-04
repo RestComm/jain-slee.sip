@@ -24,7 +24,7 @@
 	</modules>
 
 	<properties>
-		<mobicents.slee.version>${project.version}</mobicents.slee.version>
+		<mobicents.slee.version>6.1.1.GA-TelScale</mobicents.slee.version>
 		<jsip.ha.version>6.1.2.GA-TelScale</jsip.ha.version>
 		<jsip.sip.ext.version>6.1.2.GA-TelScale</jsip.sip.ext.version>
 		<loadbalancer.version>6.1.2.GA-TelScale</loadbalancer.version>

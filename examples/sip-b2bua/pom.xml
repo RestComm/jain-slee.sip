@@ -17,7 +17,17 @@
 		<module>sbb</module>						
 		<module>du</module>			
 	</modules>
-		
+	
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<artifactId>sip11-ratype</artifactId>
+				<groupId>org.mobicents.resources</groupId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
 	<build>
 		<plugins>
 			<plugin>
