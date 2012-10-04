@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>mobicents-slee-example-sip-uas</artifactId>
 		<groupId>org.mobicents.examples</groupId>
-		<version>6.1.1.GA-TelScale</version>
+		<version>6.1.2-TelScale-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>mobicents-slee-example-sip-uas-release</artifactId>
