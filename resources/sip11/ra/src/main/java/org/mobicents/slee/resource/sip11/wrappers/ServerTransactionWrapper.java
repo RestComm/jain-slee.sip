@@ -198,7 +198,8 @@ public class ServerTransactionWrapper extends TransactionWrapper implements Serv
 
 	@Override
 	public String toString() {
-		final String id = wrappedTransaction == null ? String.valueOf(null) : wrappedTransaction.getBranchId(); 
+		final Transaction transaction = this.wrappedTransaction;
+		final String id = transaction == null ? "null" : transaction.getBranchId();		 
 		return new StringBuilder("ServerTransaction[").append(id).append(']').toString();		
 	}
 
@@ -217,7 +218,6 @@ public class ServerTransactionWrapper extends TransactionWrapper implements Serv
 		if (wrappedTransaction != null) {
 			wrappedTransaction.setApplicationData(null);
 		}
-		wrappedTransaction = null;
 	}
 	
 }
