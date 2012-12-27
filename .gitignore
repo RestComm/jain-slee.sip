@@ -1,3 +1,6 @@
+# Mobicents
+${release.dir}
+
 # Java compiled #
 #################
 *.class

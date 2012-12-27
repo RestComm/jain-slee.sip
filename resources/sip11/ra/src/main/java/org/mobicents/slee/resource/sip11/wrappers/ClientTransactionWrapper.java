@@ -192,7 +192,8 @@ public class ClientTransactionWrapper extends TransactionWrapper implements
 	
 	@Override
 	public String toString() {
-		final String id = wrappedTransaction == null ? "null" : wrappedTransaction.getBranchId();
+		final Transaction transaction = this.wrappedTransaction;
+		final String id = transaction == null ? "null" : transaction.getBranchId();
 		return new StringBuilder("ClientTransaction[").append(id)
 			.append(']').toString();
 	}
@@ -214,7 +215,6 @@ public class ClientTransactionWrapper extends TransactionWrapper implements
 		if (wrappedTransaction != null) {
 			wrappedTransaction.setApplicationData(null);
 		}
-		wrappedTransaction = null;		
 	}
 
 	@Override
