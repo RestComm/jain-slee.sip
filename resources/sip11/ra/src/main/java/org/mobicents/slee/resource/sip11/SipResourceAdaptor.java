@@ -23,6 +23,7 @@
 package org.mobicents.slee.resource.sip11;
 
 import gov.nist.javax.sip.ResponseEventExt;
+import gov.nist.javax.sip.SipListenerExt;
 import gov.nist.javax.sip.Utils;
 import gov.nist.javax.sip.message.SIPRequest;
 import gov.nist.javax.sip.message.SIPResponse;
@@ -50,7 +51,6 @@ import javax.sip.RequestEvent;
 import javax.sip.ResponseEvent;
 import javax.sip.ServerTransaction;
 import javax.sip.SipFactory;
-import javax.sip.SipListener;
 import javax.sip.SipProvider;
 import javax.sip.TimeoutEvent;
 import javax.sip.Transaction;
@@ -93,6 +93,7 @@ import javax.slee.resource.UnrecognizedActivityHandleException;
 
 import net.java.slee.resource.sip.CancelRequestEvent;
 import net.java.slee.resource.sip.DialogForkedEvent;
+import net.java.slee.resource.sip.DialogTimeoutEvent;
 
 import org.mobicents.ha.javax.sip.ClusteredSipStack;
 import org.mobicents.ha.javax.sip.LoadBalancerElector;
@@ -114,7 +115,7 @@ import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapper;
 import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapperAppData;
 import org.mobicents.slee.resource.sip11.wrappers.Wrapper;
 
-public class SipResourceAdaptor implements SipListener,FaultTolerantResourceAdaptor<SipActivityHandle, String> {
+public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceAdaptor<SipActivityHandle, String> {
 
 	// Config Properties Names -------------------------------------------
 
@@ -1099,7 +1100,41 @@ public class SipResourceAdaptor implements SipListener,FaultTolerantResourceAdap
 		}
 	}
 
-	// *************** Event Life cycle
+    /* (non-Javadoc)
+     * @see gov.nist.javax.sip.SipListenerExt#processDialogTimeout(gov.nist.javax.sip.DialogTimeoutEvent)
+     */
+    public void processDialogTimeout(gov.nist.javax.sip.DialogTimeoutEvent timeoutEvent) {
+    	final Dialog d = timeoutEvent.getDialog();
+    	if (d != null) {
+			DialogWrapper dw = getDialogWrapper(d);
+			if (dw != null) {
+				final FireableEventType eventType = eventIdCache
+								.getDialogTimeoutEventId(eventLookupFacility);
+				final DialogTimeoutEvent event = new DialogTimeoutEvent(dw);
+				if (!eventIDFilter.filterEvent(eventType)) {
+					try {
+						fireEvent(dw.getActivityHandle(), eventType, event,
+								  dw.getEventFiringAddress(), DEFAULT_EVENT_FLAGS);
+					} catch (UnrecognizedActivityHandleException e) {
+						tracer.warning("Failed to fire event " + eventType +
+								", the activity " + dw + " does not exists in the SLEE");
+					} catch (Throwable e) {
+						tracer.severe("Failed to fire event", e);
+					}
+				} else {
+					if (tracer.isFineEnabled()) {
+						tracer.fine("Event " + eventType + " filtered.");
+					}
+				}
+			} else {
+				if (tracer.isFineEnabled()) {
+					tracer.fine("DialogTimoutEvent dropped due to null app data.");
+				}
+			}
+    	}
+    }
+
+    // *************** Event Life cycle
 		
 	/**
 	 * 
