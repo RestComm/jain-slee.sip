@@ -308,6 +308,12 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 				addActivity(activity);
 			}
 		}
+		else {
+			if (inviteSTW != null && inviteSTW.isActivity()) {
+				// if the invite has a tx activity then use it for the cancel, even if there is already a dialog created by an sbb 
+				activity = inviteSTW;
+			} 
+		}
 		if (tracer.isFineEnabled()) {
 			tracer.fine("Activity selected to fire CANCEL event: " + activity);
 		}
