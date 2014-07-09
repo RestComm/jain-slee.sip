@@ -1,25 +1,23 @@
 /*
- * JBoss, Home of Professional Open Source
- * Copyright 2011, Red Hat, Inc. and individual contributors
- * by the @authors tag. See the copyright.txt in the distribution for a
- * full listing of individual contributors.
+ * TeleStax, Open Source Cloud Communications
+ * Copyright 2011-2014, Telestax Inc and individual contributors
+ * by the @authors tag.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as
- * published by the Free Software Foundation; either version 2.1 of
+ * This program is free software: you can redistribute it and/or modify
+ * under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation; either version 3 of
  * the License, or (at your option) any later version.
  *
- * This software is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
+ * This file incorporates work covered by the following copyright contributed under the GNU LGPL : Copyright 2007-2011 Red Hat.
  */
-
 package org.mobicents.slee.resource.sip11.wrappers;
 
 import gov.nist.javax.sip.ListeningPointImpl;
@@ -29,14 +27,12 @@ import gov.nist.javax.sip.header.Via;
 import gov.nist.javax.sip.header.ViaList;
 import gov.nist.javax.sip.message.SIPRequest;
 import gov.nist.javax.sip.stack.SIPServerTransaction;
-
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.text.ParseException;
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.concurrent.ConcurrentHashMap;
+import net.java.slee.resource.sip.DialogActivity;
+import org.mobicents.slee.resource.sip11.ServerTransactionActivityHandle;
+import org.mobicents.slee.resource.sip11.SipActivityHandle;
+import org.mobicents.slee.resource.sip11.SipResourceAdaptor;
+import org.mobicents.slee.resource.sip11.SleeSipProviderImpl;
+import org.mobicents.slee.resource.sip11.Utils;
 
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
@@ -64,14 +60,13 @@ import javax.sip.message.Request;
 import javax.sip.message.Response;
 import javax.slee.AddressPlan;
 import javax.slee.facilities.Tracer;
-
-import net.java.slee.resource.sip.DialogActivity;
-
-import org.mobicents.slee.resource.sip11.ServerTransactionActivityHandle;
-import org.mobicents.slee.resource.sip11.SipActivityHandle;
-import org.mobicents.slee.resource.sip11.SipResourceAdaptor;
-import org.mobicents.slee.resource.sip11.SleeSipProviderImpl;
-import org.mobicents.slee.resource.sip11.Utils;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.text.ParseException;
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Abstract dialog wrapper code.
@@ -255,7 +250,17 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 		request.setHeader((Header) getCallId().clone());
 		// note: cseq will be set by dialog when sending
 		// set contact if the original response had it
-		if (origRequest.getHeader(ContactHeader.NAME) != null) {
+
+        URI requestURI = request.getRequestURI();
+        if (requestURI != null && requestURI.isSipURI()) {
+            SipURI sipURI = (SipURI) requestURI;
+            if (sipURI.getHost().equals(listeningPointImpl.getIPAddress()) && sipURI.getPort() == listeningPointImpl.getPort()) {
+                // set remote target as request uri
+                request.setRequestURI(getRemoteTarget().getURI());
+            }
+        }
+
+        if (origRequest.getHeader(ContactHeader.NAME) != null) {
 			request.setHeader(listeningPointImpl.createContactHeader());
 		}
 		
@@ -265,8 +270,8 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 		 * the responsibility of the B2BUA. Additional Route header fields MAY
 		 * also be added to the downstream request.
 		 */
-		if (getState() == null) {
-			// first request, no route available
+		if (getState() == null || !wrappedDialog.getRouteSet().hasNext()) {
+			// no route recorded
 			final RouteList routeList = request.getRouteHeaders();
 			if (routeList != null) {
 				final RouteHeader topRoute = routeList.get(0);
@@ -325,23 +330,31 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 		wrappedDialog.sendRequest(ctw.getWrappedClientTransaction());				
 		return ctw;
 	}
-	
-	/**
-	 * 
-	 * @param request
-	 * @throws SipException
-	 */
-	protected void ensureCorrectDialogLocalTag(Request request) throws SipException {
-		// ensure we are using the right tag
-		final String tag = getLocalTag();
-		if (tag != null) {
-			try {
-				((FromHeader)request.getHeader(FromHeader.NAME)).setTag(tag);
-			} catch (ParseException e) {
-				throw new SipException(e.getMessage(),e);
-			}
-		}
-	}
+
+    /**
+     *
+     * @param request
+     * @throws SipException
+     */
+    protected void ensureCorrectDialogLocalTag(Request request) throws SipException {
+        // ensure we are using the right tag
+        final String localTag = getLocalTag();
+        if (localTag != null) {
+            try {
+                ((FromHeader)request.getHeader(FromHeader.NAME)).setTag(localTag);
+            } catch (ParseException e) {
+                throw new SipException(e.getMessage(),e);
+            }
+        }
+        final String remoteTag = getRemoteTag();
+        if (remoteTag != null) {
+            try {
+                ((ToHeader)request.getHeader(ToHeader.NAME)).setTag(remoteTag);
+            } catch (ParseException e) {
+                throw new SipException(e.getMessage(),e);
+            }
+        }
+    }
 	
 	/*
 	 * (non-Javadoc)
