@@ -1026,6 +1026,10 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 				tracer.fine("Event "+eventType+" filtered.");
 			}
 		}
+        if (d != null && dw != null && (d.getState() == null || d.getState() == DialogState.TERMINATED)) {
+            // Issue 98: sip stack won't invoke processDialogTerminate when dialog creating tx times out
+            processDialogTerminated(dw);
+        }
 	}
 
 	/*
