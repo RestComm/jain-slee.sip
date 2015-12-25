@@ -247,7 +247,8 @@ public abstract class SIPRegistrarSbb implements Sbb, DataSourceParentSbbLocalIn
                             + sipAddress);
                 }
                 try {
-                    DataSourceChildSbbLocalInterface child = (DataSourceChildSbbLocalInterface) getChildRelation()
+                    DataSourceChildSbbLocalInterface child = 
+                            (DataSourceChildSbbLocalInterface) getChildRelation()
                             .create(ChildRelationExt.DEFAULT_CHILD_NAME);
                     child.getBindings(sipAddress);
                 } catch (Exception e) {
@@ -291,7 +292,8 @@ public abstract class SIPRegistrarSbb implements Sbb, DataSourceParentSbbLocalIn
 
                 // now do the work. in jdbc task
                 try {
-                    DataSourceChildSbbLocalInterface child = (DataSourceChildSbbLocalInterface) getChildRelation()
+                    DataSourceChildSbbLocalInterface child =
+                            (DataSourceChildSbbLocalInterface) getChildRelation()
                             .create(ChildRelationExt.DEFAULT_CHILD_NAME);
                     child.removeBindings(sipAddress, callId, cSeq);
                 } catch (Exception e) {
@@ -375,7 +377,8 @@ public abstract class SIPRegistrarSbb implements Sbb, DataSourceParentSbbLocalIn
 
                 // play with DB :)
                 try {
-                    DataSourceChildSbbLocalInterface child = (DataSourceChildSbbLocalInterface) getChildRelation()
+                    DataSourceChildSbbLocalInterface child = 
+                            (DataSourceChildSbbLocalInterface) getChildRelation()
                             .create(ChildRelationExt.DEFAULT_CHILD_NAME);
                     child.updateBindings(sipAddress, callId, cSeq, newContacts);
                 } catch (Exception e) {
@@ -421,7 +424,8 @@ public interface SbbActivityContextInterface extends
             return;
         }
         try {
-            DataSourceChildSbbLocalInterface child = (DataSourceChildSbbLocalInterface) getChildRelation()
+            DataSourceChildSbbLocalInterface child = 
+                    (DataSourceChildSbbLocalInterface) getChildRelation()
                     .create(ChildRelationExt.DEFAULT_CHILD_NAME);
             child.removeBinding(data.getContact(), data.getAddress());
         } catch (Exception e) {

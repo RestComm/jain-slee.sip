@@ -142,8 +142,9 @@ public interface DataSourceChildSbbLocalObject extends SbbLocalObject,
         The <literal>DataSourceChild SBB</literal> accesses its parent by using &THIS.PLATFORM; SLEE extension API:
         </para>
         <programlisting language="Java" role="JAVA">
-        final DataSourceParentSbbLocalInterface parent = (DataSourceParentSbbLocalInterface) sbbContextExt
-                .getSbbLocalObject().getParent();
+final DataSourceParentSbbLocalInterface parent =
+        (DataSourceParentSbbLocalInterface) sbbContextExt
+        .getSbbLocalObject().getParent();
          </programlisting>
      </section>
     <section id="datasource_child_sbb_jdbc_tasks">
@@ -674,7 +675,8 @@ public class UpdateBindingsJdbcTask extends DataSourceJdbcTask {
         final JdbcActivity activity = (JdbcActivity) aci.getActivity();
         activity.endActivity();
         // call back parent
-        final DataSourceParentSbbLocalInterface parent = (DataSourceParentSbbLocalInterface) sbbContextExt
+        final DataSourceParentSbbLocalInterface parent =
+                (DataSourceParentSbbLocalInterface) sbbContextExt
                 .getSbbLocalObject().getParent();
         final DataSourceJdbcTask jdbcTask = (DataSourceJdbcTask) event
                 .getTask();

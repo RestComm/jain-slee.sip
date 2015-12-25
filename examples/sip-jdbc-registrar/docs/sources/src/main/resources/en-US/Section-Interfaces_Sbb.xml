@@ -25,7 +25,8 @@ public class RegistrationBinding {
     private String callId;
     private long cSeq;
     
-    public RegistrationBinding(String sipAddress, String contactAddress, long expires, long registrationDate, float value, String callId, long seq) {
+    public RegistrationBinding(String sipAddress, String contactAddress, long expires, 
+            long registrationDate, float value, String callId, long seq) {
         super();
         this.sipAddress = sipAddress;
         this.contactAddress = contactAddress;
@@ -144,9 +145,12 @@ public interface DataSourceParentSbbLocalInterface {
 
     public void getBindingsResult(int resultCode, List&lt;RegistrationBinding&gt; bindings);
         
-    public void removeBindingsResult(int resultCode, List&lt;RegistrationBinding&gt; currentBindings, List&lt;RegistrationBinding&gt; removedBindings);
+    public void removeBindingsResult(int resultCode, List&lt;RegistrationBinding&gt; currentBindings,
+            List&lt;RegistrationBinding&gt; removedBindings);
     
-    public void updateBindingsResult(int resultCode, List&lt;RegistrationBinding&gt; currentBindings, List&lt;RegistrationBinding&gt; updatedBindings, List&lt;RegistrationBinding&gt; removedBindings);
+    public void updateBindingsResult(int resultCode, List&lt;RegistrationBinding&gt; currentBindings,
+            List&lt;RegistrationBinding&gt; updatedBindings,
+            List&lt;RegistrationBinding&gt; removedBindings);
     
 }
        </programlisting>
