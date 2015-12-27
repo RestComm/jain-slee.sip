@@ -213,14 +213,17 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	public static final int MARSHABLE_ACTIVITY_FLAGS = ActivityFlags.setSleeMayMarshal(NON_MARSHABLE_ACTIVITY_FLAGS);
 	
 	public SipResourceAdaptor() {
-		// Those values are defualt
+		// Those values are default
 		this.port = 5060;
 		// this.transport = "udp";
 		allowedTransports.add("udp");
 		allowedTransports.add("tcp");
-		transports.add("udp");
-		// this.stackAddress = "127.0.0.1";
+        allowedTransports.add("ws");
+        allowedTransports.add("wss");
 
+        transports.add("udp");
+
+        // this.stackAddress = "127.0.0.1";
 		// this.stackPrefix = "gov.nist";
 	}
 
