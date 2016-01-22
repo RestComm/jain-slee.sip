@@ -131,7 +131,7 @@ public abstract class SimpleSip11B2BTestSbb implements javax.slee.Sbb {
 		
 		try {
 			this.sipProvider.acceptCancel(event, false);
-			final ActivityContextInterface peerDialogACI = getPeerDialog(aci);
+			final ActivityContextInterface peerDialogACI = getOutgoingDialog();
 			final DialogActivity peerDialog = (DialogActivity) peerDialogACI
 					.getActivity();
 			final DialogState peerDialogState = peerDialog.getState();
