@@ -24,7 +24,7 @@
 	
 	<pause milliseconds="250"/>
 	
-	<send retrans="2000">
+	<send>
    <![CDATA[
 
      SIP/2.0 200 OK

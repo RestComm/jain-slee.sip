@@ -38,7 +38,7 @@
 	<send>
    <![CDATA[
 
-     ACK sip:bob[call_number]@[remote_ip]:5090 SIP/2.0
+     ACK [next_url] SIP/2.0
      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
      From: alice[call_number] <sip:alice[call_number]@[local_ip]:[local_port]>;tag=[call_number]
      To: bob[call_number] <sip:bob[call_number]@[remote_ip]:5090>[peer_tag_param]
@@ -53,10 +53,10 @@
 
 	<pause milliseconds="55000"/>
 
-	<send retrans="2000">
+	<send>
    <![CDATA[
 
-     BYE sip:bob[call_number]@[remote_ip]:5090 SIP/2.0
+     BYE [next_url] SIP/2.0
      Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]
      From: alice[call_number] <sip:alice[call_number]@[local_ip]:[local_port]>;tag=[call_number]
      To: bob[call_number] <sip:bob[call_number]@[remote_ip]:5090>[peer_tag_param]

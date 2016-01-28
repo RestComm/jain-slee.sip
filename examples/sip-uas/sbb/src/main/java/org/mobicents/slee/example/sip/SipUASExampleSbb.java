@@ -171,6 +171,7 @@ public abstract class SipUASExampleSbb implements javax.slee.Sbb {
 
 		final ServerTransaction serverTransaction = requestEvent
 				.getServerTransaction();
+
 		try {
 			// send "trying" response
 			Response response = messageFactory.createResponse(Response.TRYING,
@@ -179,26 +180,17 @@ public abstract class SipUASExampleSbb implements javax.slee.Sbb {
 			// get local object
 			final SbbLocalObject sbbLocalObject = this.sbbContext
 					.getSbbLocalObject();
-			// detach from the server tx activity
-			aci.detach(sbbLocalObject);
-			// create dialog activity and attach to it
-			final DialogActivity dialog = (DialogActivity) sleeSipProvider
-					.getNewDialog(serverTransaction);
-			final ActivityContextInterfaceExt dialogAci = (ActivityContextInterfaceExt) sipActivityContextInterfaceFactory
-					.getActivityContextInterface(dialog);
-			dialogAci.attach(sbbLocalObject);
-			// set timer of 60 secs on the dialog aci
-			timerFacility.setTimer(dialogAci, null,
-					System.currentTimeMillis() + 60000L, getTimerOptions());
+			
 			// send 180
 			response = messageFactory.createResponse(Response.RINGING,
 					requestEvent.getRequest());
 			serverTransaction.sendResponse(response);
-			// send 200 ok
-			response = messageFactory.createResponse(Response.OK,
-					requestEvent.getRequest());
-			response.addHeader(getContactHeader());
-			serverTransaction.sendResponse(response);
+
+			setFinalReplySent(false);
+			// set timer of 1 secs on the dialog aci to send 200 OK after that
+			timerFacility.setTimer(aci, null,
+					System.currentTimeMillis() + 1000L, getTimerOptions());			
+						
 		} catch (Exception e) {
 			getTracer().severe("failure while processing initial invite", e);
 		}
@@ -211,13 +203,49 @@ public abstract class SipUASExampleSbb implements javax.slee.Sbb {
 	 * @param aci
 	 */
 	public void onTimerEvent(TimerEvent event, ActivityContextInterface aci) {
-		aci.detach(sbbContext.getSbbLocalObject());
-		final DialogActivity dialog = (DialogActivity) aci.getActivity();
-		try {
-			dialog.sendRequest(dialog.createRequest(Request.BYE));
-		} catch (Exception e) {
-			getTracer().severe("failure while processing timer event", e);
+
+		if (getFinalReplySent())
+		{
+			aci.detach(sbbContext.getSbbLocalObject());
+			final DialogActivity dialog = (DialogActivity) aci.getActivity();
+			try {
+				dialog.sendRequest(dialog.createRequest(Request.BYE));
+			} catch (Exception e) {
+				getTracer().severe("failure while processing timer event", e);
+			}
+		}
+		else
+		{
+			// detach from the server tx activity
+			aci.detach(sbbContext.getSbbLocalObject());
+			
+			final ServerTransaction serverTransaction = (ServerTransaction) aci.getActivity();
+			try
+			{
+				// create dialog activity and attach to it
+				final DialogActivity dialog = (DialogActivity) sleeSipProvider
+					.getNewDialog(serverTransaction);
+				final ActivityContextInterfaceExt dialogAci = (ActivityContextInterfaceExt) sipActivityContextInterfaceFactory
+					.getActivityContextInterface(dialog);
+				
+				dialogAci.attach(sbbContext.getSbbLocalObject());
+			
+				// send 200 ok
+				Response response = messageFactory.createResponse(Response.OK,serverTransaction.getRequest());
+				response.addHeader(getContactHeader());
+				serverTransaction.sendResponse(response);
+					
+				setFinalReplySent(true);
+				// set timer of 30 secs on the dialog aci to send bye
+				timerFacility.setTimer(dialogAci, null, System.currentTimeMillis() + 60000L, getTimerOptions());						
+			}
+			catch (Exception e) {
+					getTracer().severe("failure while sending 200 OK response", e);
+			}			
 		}
 	}
 
+	public abstract void setFinalReplySent(Boolean value);
+
+	public abstract Boolean getFinalReplySent();	
 }
