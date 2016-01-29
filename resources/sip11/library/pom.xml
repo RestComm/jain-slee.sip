@@ -20,15 +20,15 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.ha.javax.sip</groupId>
-			<artifactId>mobicents-jain-sip-ha-core</artifactId>
+			<artifactId>restcomm-jain-sip-ha-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.javax.sip</groupId>
-			<artifactId>mobicents-jain-sip-ext</artifactId>
+			<artifactId>restcomm-jain-sip-ext</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.ha.javax.sip</groupId>
-			<artifactId>mobicents-jain-sip-jboss5</artifactId>
+			<artifactId>restcomm-jain-sip-jboss5</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.sip</groupId>
