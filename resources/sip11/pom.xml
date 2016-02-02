@@ -24,7 +24,7 @@
 	</modules>
 
 	<properties>
-		<restcomm.slee.version>2.8.0-SNAPSHOT</restcomm.slee.version>
+		<restcomm.slee.version>2.8.19</restcomm.slee.version>
 		<jsip.ha.version>1.5.9</jsip.ha.version>
 		<jsip.sip.ext.version>1.3.14</jsip.sip.ext.version>
 		<loadbalancer.version>2.0.19</loadbalancer.version>
