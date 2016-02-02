@@ -16,6 +16,7 @@
 		<dependency>
 			<groupId>org.mobicents.servers.jainslee.api</groupId>
 			<artifactId>jain-slee-11-ext</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 

@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<artifactId>mobicents-slee-example-sip11-b2b</artifactId>
+		<artifactId>restcomm-slee-example-sip11-b2b</artifactId>
 		<groupId>org.mobicents.examples</groupId>
 		<version>2.8.0-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>mobicents-slee-example-sip11-b2b-sbb</artifactId>
+	<artifactId>restcomm-slee-example-sip11-b2b-sbb</artifactId>
 			
 	<dependencies>
 		<dependency>

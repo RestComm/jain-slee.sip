@@ -4,12 +4,12 @@
 	<packaging>pom</packaging>
 	
 	<parent>
-		<artifactId>mobicents-slee-example-sip-jdbc-registrar</artifactId>
+		<artifactId>restcomm-slee-example-sip-jdbc-registrar</artifactId>
 		<groupId>org.mobicents.examples</groupId>
 		<version>2.8.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>mobicents-slee-example-sip-jdbc-registrar-release</artifactId>
+	<artifactId>restcomm-slee-example-sip-jdbc-registrar-release</artifactId>
 		
 	<profiles>
 		<profile>

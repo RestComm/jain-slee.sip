@@ -31,12 +31,12 @@
 				<step>
 				    <title>Downloading the source code</title>
 				    <important>
-				    	<para>Git is used to manage Mobicents JAIN SLEE source code. Instructions for downloading, installing and using Git can be found at <ulink url="http://git-scm.com/" /></para>
+				    	<para>Git is used to manage Restcomm JAIN SLEE source code. Instructions for downloading, installing and using Git can be found at <ulink url="http://git-scm.com/" /></para>
 				    </important>
 				    <para>Use Git to checkout a specific release source, the Git repository URL is &THIS.SOURCE_CODE_URL; , then switch to the specific release version, lets consider &THIS.VERSION;.</para>
 				    <programlisting>
-				    [usr]$ git clone &THIS.SOURCE_CODE_URL; mobicents-jain-slee-&THIS.PACKAGE_NAME;
-				    [usr]$ cd mobicents-jain-slee-&THIS.PACKAGE_NAME;
+				    [usr]$ git clone &THIS.SOURCE_CODE_URL; restcomm-jain-slee-&THIS.PACKAGE_NAME;
+				    [usr]$ cd restcomm-jain-slee-&THIS.PACKAGE_NAME;
 				    [usr]$ git checkout tags/&THIS.VERSION;
 					</programlisting>
   				</step>

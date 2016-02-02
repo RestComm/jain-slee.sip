@@ -10,8 +10,8 @@
     
       REGISTER sip:mobicents.org SIP/2.0
       Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]1
-      From: "Some Sleepy User" <sip:ua[call_number]@mobicents.org>;tag=[call_number]
-      To: "ua[call_number]" <sip:ua[call_number]@mobicents.org>
+      From: "Some Sleepy User" <sip:ua[call_number]@restcomm.com>;tag=[call_number]
+      To: "ua[call_number]" <sip:ua[call_number]@restcomm.com>
       Call-ID: [call_id]
       CSeq: 1 REGISTER
       Contact: sip:ua[call_number]@[local_ip]:[local_port]
@@ -33,10 +33,10 @@
 	<send retrans="5000">
     <![CDATA[
     
-    MESSAGE sip:wakeup@mobicents.org SIP/2.0
+    MESSAGE sip:wakeup@restcomm.com SIP/2.0
     Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]1
-    From: "Some Sleepy User" <sip:ua[call_number]@mobicents.org>;tag=[call_number]
-    To: "Wake Up Service" <sip:wakeup@mobicents.org>
+    From: "Some Sleepy User" <sip:ua[call_number]@restcomm.com>;tag=[call_number]
+    To: "Wake Up Service" <sip:wakeup@restcomm.com>
     Call-ID: [call_id]
     CSeq: 1 MESSAGE
     Max-Forwards: 70
@@ -81,8 +81,8 @@
     
     REGISTER sip:mobicents.org SIP/2.0
     Via: SIP/2.0/[transport] [local_ip]:[local_port];branch=[branch]2
-    From: "Some Sleepy User" <sip:ua[call_number]@mobicents.org>;tag=[call_number]
-    To: "ua[call_number]" <sip:ua[call_number]@mobicents.org>
+    From: "Some Sleepy User" <sip:ua[call_number]@restcomm.com>;tag=[call_number]
+    To: "ua[call_number]" <sip:ua[call_number]@restcomm.com>
     Call-ID: [call_id]
     CSeq: 4 REGISTER
     Contact: sip:ua[call_number]@[local_ip]:[local_port]

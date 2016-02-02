@@ -2,14 +2,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<artifactId>mobicents-slee-ra-sip11</artifactId>
+		<artifactId>restcomm-slee-ra-sip11</artifactId>
 		<groupId>org.mobicents.resources</groupId>
 		<version>2.8.0-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>sip11-ra</artifactId>
 	
-	<name>Mobicents :: Resources :: ${pom.artifactId}</name>	
+	<name>Restcomm :: Resources :: ${pom.artifactId}</name>	
 		
 	<dependencies>
 		<dependency>

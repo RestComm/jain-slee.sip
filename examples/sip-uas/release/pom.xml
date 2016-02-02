@@ -4,12 +4,12 @@
 	<packaging>pom</packaging>
 	
 	<parent>
-		<artifactId>mobicents-slee-example-sip-uas</artifactId>
+		<artifactId>restcomm-slee-example-sip-uas</artifactId>
 		<groupId>org.mobicents.examples</groupId>
 		<version>2.8.0-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>mobicents-slee-example-sip-uas-release</artifactId>
+	<artifactId>restcomm-slee-example-sip-uas-release</artifactId>
 		
 	<profiles>
 		<profile>

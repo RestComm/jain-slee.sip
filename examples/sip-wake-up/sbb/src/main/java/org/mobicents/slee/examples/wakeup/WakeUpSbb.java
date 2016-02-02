@@ -329,7 +329,7 @@ public abstract class WakeUpSbb implements javax.slee.Sbb, DataSourceParentSbbLo
 				// create headers needed to create a out-of-dialog request
 				AddressFactory addressFactory = sipProvider.getAddressFactory();
 				Address fromNameAddress = addressFactory
-						.createAddress("sip:wakeup@mobicents.org");
+						.createAddress("sip:wakeup@restcomm.com");
 				fromNameAddress.setDisplayName("Wake Up Service");
 				HeaderFactory headerFactory = sipProvider.getHeaderFactory();
 				FromHeader fromHeader = headerFactory.createFromHeader(
