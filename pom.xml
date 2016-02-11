@@ -12,6 +12,14 @@
 	<version>2.8.0-SNAPSHOT</version>
 			
 	<packaging>pom</packaging>
+
+	<properties>
+		<restcomm.jain.slee.version>2.8.27</restcomm.jain.slee.version>
+		<restcomm.jain.slee.jdbc.version>2.8.8</restcomm.jain.slee.jdbc.version>
+		<restcomm.jain.sip.ext.version>1.3.17</restcomm.jain.sip.ext.version>
+		<restcomm.jain.sip.ha.version>1.5.15</restcomm.jain.sip.ha.version>
+		<restcomm.loadbalancer.version>2.0.22</restcomm.loadbalancer.version>
+	</properties>
 	
 	<modules>
 		<module>resources/sip11</module>
@@ -24,9 +32,9 @@
 	</modules>
 		
 	<scm>
-		<connection>scm:git:https://code.google.com/p/jain-slee.sip/</connection>
-		<developerConnection>scm:git:https://code.google.com/p/jain-slee.sip/</developerConnection>
-		<url>https://code.google.com/p/jain-slee.sip/</url>
+		<connection>scm:git:https://github.com/RestComm/jain-slee.sip.git</connection>
+		<developerConnection>scm:git:git@github.com:RestComm/jain-slee.sip.git</developerConnection>
+		<url>https://github.com/RestComm/jain-slee.sip</url>
 	</scm>     
 			
 	<profiles>
