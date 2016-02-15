@@ -14,9 +14,9 @@
 	<properties>
 		<THIS.PLATFORM>Restcomm</THIS.PLATFORM>
 		<JEE.PLATFORM>JBoss Application Server</JEE.PLATFORM>
-		<THIS.ISSUE_TRACKER_URL>http://code.google.com/p/jain-slee/issues/list</THIS.ISSUE_TRACKER_URL>
+		<THIS.ISSUE_TRACKER_URL>https://github.com/RestComm/jain-slee.${THIS.PACKAGE_NAME}/issues</THIS.ISSUE_TRACKER_URL>
 		<THIS.PACKAGE_NAME>sip</THIS.PACKAGE_NAME>
-		<THIS.SOURCE_CODE_URL>https://code.google.com/p/jain-slee.${THIS.PACKAGE_NAME}/</THIS.SOURCE_CODE_URL>
+		<THIS.SOURCE_CODE_URL>https://github.com/RestComm/jain-slee.${THIS.PACKAGE_NAME}/</THIS.SOURCE_CODE_URL>
 		<author.email.eduardo>emmartins (at) gmail.com</author.email.eduardo>		
 	</properties>
 	
