@@ -19,7 +19,8 @@
 		<dependency>
 				<groupId>org.mobicents.servers.jainslee.api</groupId>
 				<artifactId>jain-slee-11-ext</artifactId>
-				<version>1.0.0.BETA1</version>
+				<!--<version>1.0.0.BETA1</version>-->
+				<version>${restcomm.jain.slee.version}</version>
 			</dependency>
 	</dependencies>
 	
