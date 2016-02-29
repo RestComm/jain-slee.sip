@@ -96,23 +96,23 @@ public class ClientTransactionWrapper extends TransactionWrapper implements Clie
 	}
 	
 	@Override
-    public Object getApplicationData() {
-        return clientTransactionWrapperAppData().getWrappedApplicationData();
-    }
+	public Object getApplicationData() {
+		return clientTransactionWrapperAppData().getWrappedApplicationData();
+	}
 
-    @Override
-    public void setApplicationData(final Object applicationData) {
+	@Override
+	public void setApplicationData(final Object applicationData) {
 		ClientTransactionWrapperAppData appDataWrapper = clientTransactionWrapperAppData();
 		if (appDataWrapper == null) {
 			throw new IllegalStateException();
 		} else {
 			appDataWrapper.setWrappedApplicationData(applicationData);
 		}
-    }
+	}
 
-    private ClientTransactionWrapperAppData clientTransactionWrapperAppData() {
-        return (ClientTransactionWrapperAppData) wrappedTransaction.getApplicationData();
-    }
+	private ClientTransactionWrapperAppData clientTransactionWrapperAppData() {
+		return (ClientTransactionWrapperAppData) wrappedTransaction.getApplicationData();
+	}
 
 	
 	@Override
