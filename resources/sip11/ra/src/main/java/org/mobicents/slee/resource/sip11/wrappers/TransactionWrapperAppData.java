@@ -28,6 +28,10 @@ import org.mobicents.slee.resource.sip11.SipResourceAdaptor;
 
 public interface TransactionWrapperAppData {
 
+	Object getWrappedApplicationData();
+
+	void setWrappedApplicationData(Object wrappedApplicationData);
+
 	public TransactionWrapper getTransactionWrapper(Transaction t, SipResourceAdaptor ra);
 	
 }

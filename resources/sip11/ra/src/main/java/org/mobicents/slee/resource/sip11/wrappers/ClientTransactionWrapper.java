@@ -41,8 +41,7 @@ import org.mobicents.slee.resource.sip11.SipResourceAdaptor;
  * Wrapper for a {@link ClientTransaction}
  *
  */
-public class ClientTransactionWrapper extends TransactionWrapper implements
-		ClientTransaction {
+public class ClientTransactionWrapper extends TransactionWrapper implements ClientTransaction {
 
 	private static final long serialVersionUID = 1L;
 	private static Tracer tracer;
@@ -95,6 +94,26 @@ public class ClientTransactionWrapper extends TransactionWrapper implements
 	public ClientTransaction getWrappedClientTransaction() {
 		return wrappedTransaction;
 	}
+	
+	@Override
+    public Object getApplicationData() {
+        return clientTransactionWrapperAppData().getWrappedApplicationData();
+    }
+
+    @Override
+    public void setApplicationData(final Object applicationData) {
+		ClientTransactionWrapperAppData appDataWrapper = clientTransactionWrapperAppData();
+		if (appDataWrapper == null) {
+			throw new IllegalStateException();
+		} else {
+			appDataWrapper.setWrappedApplicationData(applicationData);
+		}
+    }
+
+    private ClientTransactionWrapperAppData clientTransactionWrapperAppData() {
+        return (ClientTransactionWrapperAppData) wrappedTransaction.getApplicationData();
+    }
+
 	
 	@Override
 	public boolean isAckTransaction() {		
