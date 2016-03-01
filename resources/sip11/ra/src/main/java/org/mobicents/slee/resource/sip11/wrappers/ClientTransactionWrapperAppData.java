@@ -19,64 +19,59 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.slee.resource.sip11.wrappers;
 
 import gov.nist.javax.sip.stack.SIPClientTransaction;
 
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-
-import javax.sip.Transaction;
+import javax.sip.ClientTransaction;
 
 import org.mobicents.slee.resource.sip11.SipResourceAdaptor;
 
-public class ClientTransactionWrapperAppData implements TransactionWrapperAppData, Externalizable {
+public class ClientTransactionWrapperAppData extends TransactionWrapperAppData<ClientTransaction, ClientTransactionWrapper> {
 
-	private ClientTransactionWrapper transactionWrapper;
-	private String associatedServerTransactionId;
-	
-	public ClientTransactionWrapperAppData(ClientTransactionWrapper transactionWrapper) {
-		this.transactionWrapper = transactionWrapper;
-	}
-	
-	public ClientTransactionWrapperAppData() {
-		
-	}
-	
-	
-	@Override
-	public TransactionWrapper getTransactionWrapper(Transaction t,
-			SipResourceAdaptor ra) {
-		if (transactionWrapper == null) {
-			transactionWrapper = new ClientTransactionWrapper((SIPClientTransaction) t, ra);
-			transactionWrapper.setAssociatedServerTransaction(associatedServerTransactionId,false);
-		}
-		return transactionWrapper;
-	}
+    private static final long serialVersionUID = 8707077860142474847L;
+    private String associatedServerTransactionId;    
+    
+    public ClientTransactionWrapperAppData() {
+        super();
+    }
+    
+    public ClientTransactionWrapperAppData(ClientTransactionWrapper transactionWrapper) {
+        super(transactionWrapper);
+    }
 
-	@Override
-	public void writeExternal(ObjectOutput out) throws IOException {
-		if (transactionWrapper != null) {
-			associatedServerTransactionId = transactionWrapper.getAssociatedServerTransaction();
-		}
-		if (associatedServerTransactionId != null) {
-			out.writeBoolean(true);
-			out.writeUTF(associatedServerTransactionId);
-		}
-		else {
-			out.writeBoolean(false);
-		}
-	}
+    @Override
+    public ClientTransactionWrapper getTransactionWrapper(ClientTransaction t, SipResourceAdaptor ra) {
+        if (transactionWrapper == null) {
+            transactionWrapper = new ClientTransactionWrapper((SIPClientTransaction) t, ra);
+            transactionWrapper.setAssociatedServerTransaction(associatedServerTransactionId, false);
+        }
+        return transactionWrapper;
+    }
 
-	@Override
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
-		if (in.readBoolean()) {
-			associatedServerTransactionId = in.readUTF();
-		}
-	}
+    @Override
+    public void writeExternal(ObjectOutput out) throws IOException {
+        super.writeExternal(out);
+        if (transactionWrapper != null) {
+            associatedServerTransactionId = transactionWrapper.getAssociatedServerTransactionId();
+        }
+        if (associatedServerTransactionId != null) {
+            out.writeBoolean(true);
+            out.writeUTF(associatedServerTransactionId);
+        } else {
+            out.writeBoolean(false);
+        }
+    }
+
+    @Override
+    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+        super.readExternal(in);
+        if (in.readBoolean()) {
+            associatedServerTransactionId = in.readUTF();
+        }
+    }
 
 }
