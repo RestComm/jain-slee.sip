@@ -36,6 +36,7 @@ import org.mobicents.slee.resource.sip11.SipResourceAdaptor;
 public class ServerTransactionWrapperAppData implements TransactionWrapperAppData, Externalizable {
 
 	private ServerTransactionWrapper transactionWrapper;
+	private Object wrappedApplicationData = null;
 	
 	public ServerTransactionWrapperAppData(ServerTransactionWrapper transactionWrapper) {
 		this.transactionWrapper = transactionWrapper;
@@ -47,8 +48,7 @@ public class ServerTransactionWrapperAppData implements TransactionWrapperAppDat
 	
 	
 	@Override
-	public TransactionWrapper getTransactionWrapper(Transaction t,
-			SipResourceAdaptor ra) {
+	public TransactionWrapper getTransactionWrapper(Transaction t, SipResourceAdaptor ra) {
 		if (transactionWrapper == null) {
 			transactionWrapper = new ServerTransactionWrapper((SIPServerTransaction) t, ra);
 		}
@@ -57,13 +57,38 @@ public class ServerTransactionWrapperAppData implements TransactionWrapperAppDat
 
 	@Override
 	public void writeExternal(ObjectOutput out) throws IOException {
-		// nothing
+		writeExternalWrappedApplicationData(out);
+	}
+
+	private void writeExternalWrappedApplicationData(ObjectOutput out) throws IOException {
+		if (wrappedApplicationData != null) {
+			out.writeBoolean(true);
+			out.writeObject(wrappedApplicationData);
+		} else {
+			out.writeBoolean(false);
+		}
 	}
 
 	@Override
 	public void readExternal(ObjectInput in) throws IOException,
 			ClassNotFoundException {
-		// nothing
+		readExternalWrappedApplicationData(in);
+	}
+
+	private void readExternalWrappedApplicationData(ObjectInput in) throws IOException, ClassNotFoundException {
+		if (in.readBoolean()) {
+			wrappedApplicationData = in.readObject();
+		}
+	}
+
+	@Override
+	public Object getWrappedApplicationData() {
+		return wrappedApplicationData;
+	}
+
+	@Override
+	public void setWrappedApplicationData(final Object wrappedApplicationData) {
+		this.wrappedApplicationData = wrappedApplicationData;
 	}
 
 }
