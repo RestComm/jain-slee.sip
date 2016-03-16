@@ -120,6 +120,25 @@ public class ServerTransactionWrapper extends TransactionWrapper implements Serv
 	}
 	
 	@Override
+	public Object getApplicationData() {
+		return serverTransactionWrapperAppData().getWrappedApplicationData();
+	}
+
+	@Override
+	public void setApplicationData(final Object applicationData) {
+		ServerTransactionWrapperAppData appDataWrapper = serverTransactionWrapperAppData();
+		if (appDataWrapper == null) {
+			throw new IllegalStateException();
+		} else {
+			appDataWrapper.setWrappedApplicationData(applicationData);
+		}
+	}
+
+	private ServerTransactionWrapperAppData serverTransactionWrapperAppData() {
+		return (ServerTransactionWrapperAppData) wrappedTransaction.getApplicationData();
+	}
+	
+	@Override
 	public boolean isAckTransaction() {
 		return ackTransaction;
 	}

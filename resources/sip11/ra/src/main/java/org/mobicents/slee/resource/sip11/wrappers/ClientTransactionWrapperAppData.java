@@ -37,6 +37,7 @@ public class ClientTransactionWrapperAppData implements TransactionWrapperAppDat
 
 	private ClientTransactionWrapper transactionWrapper;
 	private String associatedServerTransactionId;
+	private Object wrappedApplicationData = null;
 	
 	public ClientTransactionWrapperAppData(ClientTransactionWrapper transactionWrapper) {
 		this.transactionWrapper = transactionWrapper;
@@ -65,18 +66,45 @@ public class ClientTransactionWrapperAppData implements TransactionWrapperAppDat
 		if (associatedServerTransactionId != null) {
 			out.writeBoolean(true);
 			out.writeUTF(associatedServerTransactionId);
+		} else {
+			out.writeBoolean(false);
 		}
-		else {
+
+		writeExternalWrappedApplicationData(out);
+	}
+
+	private void writeExternalWrappedApplicationData(ObjectOutput out) throws IOException {
+		if (wrappedApplicationData != null) {
+			out.writeBoolean(true);
+			out.writeObject(wrappedApplicationData);
+		} else {
 			out.writeBoolean(false);
 		}
 	}
 
 	@Override
-	public void readExternal(ObjectInput in) throws IOException,
-			ClassNotFoundException {
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
 		if (in.readBoolean()) {
 			associatedServerTransactionId = in.readUTF();
 		}
+
+		readExternalWrappedApplicationData(in);
+	}
+
+	private void readExternalWrappedApplicationData(ObjectInput in) throws IOException, ClassNotFoundException {
+		if (in.readBoolean()) {
+			wrappedApplicationData = in.readObject();
+		}
+	}
+
+	@Override
+	public Object getWrappedApplicationData() {
+		return wrappedApplicationData;
+	}
+
+	@Override
+	public void setWrappedApplicationData(final Object wrappedApplicationData) {
+		this.wrappedApplicationData = wrappedApplicationData;
 	}
 
 }
