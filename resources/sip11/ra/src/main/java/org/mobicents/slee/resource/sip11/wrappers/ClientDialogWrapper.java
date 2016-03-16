@@ -21,6 +21,7 @@
 package org.mobicents.slee.resource.sip11.wrappers;
 
 import gov.nist.javax.sip.DialogExt;
+import gov.nist.javax.sip.ListeningPointImpl;
 import gov.nist.javax.sip.address.SipUri;
 import gov.nist.javax.sip.message.SIPRequest;
 import org.mobicents.slee.resource.sip11.DialogWithoutIdActivityHandle;
@@ -39,6 +40,7 @@ import javax.sip.Transaction;
 import javax.sip.TransactionDoesNotExistException;
 import javax.sip.TransactionUnavailableException;
 import javax.sip.address.Address;
+import javax.sip.address.SipURI;
 import javax.sip.address.URI;
 import javax.sip.header.CSeqHeader;
 import javax.sip.header.CallIdHeader;
@@ -46,6 +48,7 @@ import javax.sip.header.FromHeader;
 import javax.sip.header.HeaderFactory;
 import javax.sip.header.MaxForwardsHeader;
 import javax.sip.header.ToHeader;
+import javax.sip.header.ContactHeader;
 import javax.sip.message.Request;
 import javax.sip.message.Response;
 import javax.slee.facilities.Tracer;
@@ -407,7 +410,30 @@ public class ClientDialogWrapper extends DialogWrapper {
 				request = provider.getMessageFactory()
 				.createRequest(requestURI, methodName, customCallId,
 						cSeqHeader, fromHeader, toHeader,
-						viaHeadersList, maxForwardsHeader);								
+						viaHeadersList, maxForwardsHeader);
+
+				// see issue #8: Add Contact header to new request in case when real dialog doesn't exist yet
+				// https://github.com/RestComm/jain-slee.sip/issues/8
+				// see SIPDialog.createRequest(String method, String topMostViaTransport)
+				/*
+				 * The default contact header is obtained from the provider. The
+				 * application can override this.
+				 *
+				 * JvB: Should only do this for target refresh requests, ie not for BYE,
+				 * PRACK, etc
+				 */
+
+				ListeningPointImpl lp = (ListeningPointImpl) provider.getListeningPoint();
+				if (SIPRequest.isTargetRefresh(methodName)) {
+					ContactHeader contactHeader = ((ListeningPointImpl) provider
+							.getListeningPoint(lp.getTransport()))
+							.createContactHeader();
+
+					((SipURI) contactHeader.getAddress().getURI())
+							.setSecure(this.isSecure());
+					request.setHeader(contactHeader);
+				}
+
 			} catch (Exception e) {
 				throw new SipException(e.getMessage(), e);
 			}
