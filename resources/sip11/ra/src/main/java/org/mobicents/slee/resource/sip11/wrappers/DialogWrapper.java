@@ -176,7 +176,7 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 
 	/*
 	 * (non-Javadoc)
-	 * @see net.java.slee.resource.sip.DialogActivity#getAssociatedServerTransaction(javax.sip.ClientTransaction)
+	 * @see net.java.slee.resource.sip.DialogActivity#getAssociatedServerTransactionId(javax.sip.ClientTransaction)
 	 */
 	public ServerTransaction getAssociatedServerTransaction(ClientTransaction ct) {
 		
@@ -185,7 +185,7 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 		}
 		
 		final ClientTransactionWrapper ctw = (ClientTransactionWrapper) ct;
-		final String associatedServerTransactionId = ctw.getAssociatedServerTransaction();
+		final String associatedServerTransactionId = ctw.getAssociatedServerTransactionId();
 		if (associatedServerTransactionId != null) {
 			SIPServerTransaction st = (SIPServerTransaction) ra.getProviderWrapper().getClusteredSipStack().findTransaction(associatedServerTransactionId, true);
 			return (ServerTransaction) ra.getTransactionWrapper(st);

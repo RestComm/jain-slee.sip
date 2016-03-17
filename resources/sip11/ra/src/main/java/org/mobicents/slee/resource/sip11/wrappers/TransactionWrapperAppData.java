@@ -19,15 +19,71 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
 package org.mobicents.slee.resource.sip11.wrappers;
 
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 import javax.sip.Transaction;
-
 import org.mobicents.slee.resource.sip11.SipResourceAdaptor;
 
-public interface TransactionWrapperAppData {
+public abstract class TransactionWrapperAppData<T extends Transaction, TW extends TransactionWrapper>
+        implements WrapperAppData {
 
-	public TransactionWrapper getTransactionWrapper(Transaction t, SipResourceAdaptor ra);
-	
+    protected TW transactionWrapper;
+    private static final long serialVersionUID = 4855074939713665946L;
+    private Object wrappedApplicationData;
+
+    public abstract TW getTransactionWrapper(T transaction, SipResourceAdaptor sipResourceAdaptor);
+
+    public TransactionWrapperAppData() {
+    }
+    
+    public TransactionWrapperAppData(TW transactionWrapper) {
+        this.transactionWrapper = transactionWrapper;
+    }
+
+    /**
+     * Gets the wrapped application data.
+     *
+     * @return
+     */
+    public Object getWrappedApplicationData() {
+        return wrappedApplicationData;
+    }
+
+    /**
+     * Sets the wrapped application data.
+     *
+     * @param wrappedApplicationData
+     */
+    public void setWrappedApplicationData(Object wrappedApplicationData) {
+        this.wrappedApplicationData = wrappedApplicationData;
+    }
+
+    @Override
+    public void readExternal(ObjectInput objectInput) throws IOException, ClassNotFoundException {
+        readExternalWrappedApplicationData(objectInput);
+    }
+
+    private void readExternalWrappedApplicationData(ObjectInput objectInput) throws IOException, ClassNotFoundException {
+        if (objectInput.readBoolean()) {
+            wrappedApplicationData = objectInput.readObject();
+        }
+    }
+
+    @Override
+    public void writeExternal(ObjectOutput objectOutput) throws IOException {
+        writeExternalWrappedApplicationData(objectOutput);
+    }
+
+    private void writeExternalWrappedApplicationData(ObjectOutput objectOutput) throws IOException {
+        if (wrappedApplicationData != null) {
+            objectOutput.writeBoolean(true);
+            objectOutput.writeObject(wrappedApplicationData);
+        } else {
+            objectOutput.writeBoolean(false);
+        }
+    }
+
 }
