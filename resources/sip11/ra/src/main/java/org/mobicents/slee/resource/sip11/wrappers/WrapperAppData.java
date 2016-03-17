@@ -21,29 +21,12 @@
  */
 package org.mobicents.slee.resource.sip11.wrappers;
 
-import gov.nist.javax.sip.stack.SIPServerTransaction;
-import javax.sip.ServerTransaction;
+import java.io.Externalizable;
 
-import org.mobicents.slee.resource.sip11.SipResourceAdaptor;
+public interface WrapperAppData extends Externalizable {
 
-public class ServerTransactionWrapperAppData extends TransactionWrapperAppData<ServerTransaction, ServerTransactionWrapper> {
+    Object getWrappedApplicationData();
 
-    private static final long serialVersionUID = 3155523892627487079L;
-
-    public ServerTransactionWrapperAppData() {
-        super();
-    }
-
-    public ServerTransactionWrapperAppData(ServerTransactionWrapper transactionWrapper) {
-        super(transactionWrapper);
-    }
-
-    @Override
-    public ServerTransactionWrapper getTransactionWrapper(ServerTransaction t, SipResourceAdaptor ra) {
-        if (transactionWrapper == null) {
-            transactionWrapper = new ServerTransactionWrapper((SIPServerTransaction) t, ra);
-        }
-        return transactionWrapper;
-    }
+    void setWrappedApplicationData(Object wrappedApplicationData);
 
 }
