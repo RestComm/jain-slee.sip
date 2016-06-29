@@ -446,12 +446,12 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 	public ClientTransaction sendCancel() throws SipException {
 		try {
 			final ClientTransaction inviteCTX = this.getClientTransaction(lastCancelableTransactionId);
-			final ClientTransactionWrapper cancelTransaction = ra.getProviderWrapper().getNewDialogActivityClientTransaction(this,inviteCTX.createCancel());
+			final ClientTransaction cancelTransaction = ra.getProviderWrapper().getNewClientTransaction(inviteCTX.createCancel());
 			if (tracer.isInfoEnabled()) {
 				tracer.info(String.valueOf(cancelTransaction) + " sending request:\n"
 						+ cancelTransaction.getRequest());
 			}
-			cancelTransaction.getWrappedClientTransaction().sendRequest();
+			cancelTransaction.sendRequest();
 			return cancelTransaction;
 		} catch (NullPointerException npe) {
 			throw new SipException("Failed to find client transaction or no INVITE transaction present",npe);
