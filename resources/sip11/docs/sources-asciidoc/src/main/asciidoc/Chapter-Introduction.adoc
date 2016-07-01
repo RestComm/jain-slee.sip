@@ -1,0 +1,13 @@
+[[_introduction]]
+= Introduction to {this-platform} JAIN SLEE {this-ra} Resource Adaptor
+
+This resource adaptor provides a SIP API for JAIN SLEE applications, adapting the JAIN SIP 1.2 specification.
+JAIN SIP 1.2 is a Java specification for the Session Initiation Protocol, as defined by the protocol specs done by the IETF.
+Both transaction and dialog layers of the SIP protocol are available, to support all types of SIP applications through a single API.
+Lower level applications, such as SIP Proxies or Registrars typically use the transaction layer exclusively, while UAC, UAS and B2BUA higher level SIP applications rely on the dialog layer.
+
+Events represent SIP messages received by the SIP stack, or failure use cases such as timeouts.
+Unlike the base JAIN SIP 1.2 API, SIP Requests with different SIP methods are fired as different event types, the same happens for SIP Responses with status code.
+The events are fired on transaction or dialog activities.
+
+The Activities are the SIP Transactions and Dialogs, which applications in the SLEE may use to send SIP Requests and Responses, and to receive the events related with incoming messages.

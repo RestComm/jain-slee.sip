@@ -1,0 +1,34 @@
+[[_ra_clustering]]
+= Clustering
+
+[[_ra_clustering_failover]]
+== Failover
+
+The SIP Stack used by the RA supports `ESTABLISHED` and `EARLY` dialog failover.
+This means that an application must be in charge of properly adapting its state machine to recover dialog state in case original transaction had not send or receive answer with code greater than `100`. 
+
+[[_ra_clustering_load_balancing]]
+== Load Balancing
+
+The RA can be used with {this-platform} SIP Load Balancer.
+The recommended version is {loadbalancer-version}.
+
+[[_ra_clustering_load_balancer_configuration]]
+=== Configuring the Resource Adaptor to be used with {this-platform} SIP Load Balancer
+
+There are three properties which define how the RA connects to {this-platform} SIP Load Balancer:
+
+org.mobicents.ha.javax.sip.BALANCERS::
+  the property must be configured with the list of load balancer IP address and internal ports.
+  As an example, suppose a single {this-platform} SIP Load Balancer is running with IP `192.168.0.1` and internal port `5065`.
+  The property would be set with a value of``192.168.0.1:5065``.
+  To specify multiple balancers use `;` as a separator.
+
+org.mobicents.ha.javax.sip.LoadBalancerHeartBeatingServiceClassName::
+  this property is optional, and defines the class name of the HeartBeating service implementation.
+  Currently, the only one available is `org.mobicents.ha.javax.sip.LoadBalancerHeartBeatingServiceImpl`
+
+org.mobicents.ha.javax.sip.LoadBalancerElector::
+  this property is optional, and defines the class of the load balancer elector from JAIN SIP HA Stack.
+  The elector is used to define which load balancer will receive outgoing requests, which are out of dialog or in dialog with null state.
+  Currently only one elector implementation is available, `org.mobicents.ha.javax.sip.RoundRobinLoadBalancerElector`, which, as the class name says, uses a round robin algorithm to select the balancer.
