@@ -90,6 +90,8 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 	 * the wrapped dialog
 	 */
 	protected Dialog wrappedDialog;
+
+	protected boolean terminateOnByeCached;
 	
 	/**
 	 * the local tag of the dialog, for certain cases it is out of sync with wrapped dialog, because the wrapped dialog may be created without one assigned 
@@ -120,7 +122,8 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 	 * 
 	 */
 	public DialogWrapper(SipActivityHandle sipActivityHandle, SipResourceAdaptor ra) {
-		super(sipActivityHandle,ra);		
+		super(sipActivityHandle,ra);
+		this.terminateOnByeCached = true;
 		if (tracer == null) {
 			tracer = ra.getTracer(DialogWrapper.class.getSimpleName());
 		}
@@ -676,7 +679,10 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 	 * @see javax.sip.Dialog#terminateOnBye(boolean)
 	 */
 	public void terminateOnBye(boolean arg0) throws SipException {
-		wrappedDialog.terminateOnBye(arg0);
+		this.terminateOnByeCached = arg0;
+		if (wrappedDialog != null) {
+			wrappedDialog.terminateOnBye(arg0);
+		}
 	}
 	
 	// ...  
@@ -761,6 +767,11 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 	public void setWrappedDialog(Dialog wrappedDialog) {
 		this.wrappedDialog = wrappedDialog;
 		if (wrappedDialog != null) {
+			try {
+				wrappedDialog.terminateOnBye(this.terminateOnByeCached);
+			} catch (SipException e) {
+				// FIXME: what we can do when SipException occurs?
+			}
 			wrappedDialog.setApplicationData(new DialogWithIdWrapperAppData(this));
 		}
 	}

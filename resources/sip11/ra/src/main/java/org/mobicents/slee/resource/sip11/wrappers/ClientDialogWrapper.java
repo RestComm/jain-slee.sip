@@ -313,7 +313,6 @@ public class ClientDialogWrapper extends DialogWrapper {
 
 	@Override
 	public void terminateOnBye(boolean arg0) throws SipException {
-		verifyDialogExistency();
 		super.terminateOnBye(arg0);
 	}
 
