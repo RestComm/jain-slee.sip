@@ -14,7 +14,7 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<restcomm.jain.slee.version>2.8.82</restcomm.jain.slee.version>
+		<restcomm.jain.slee.version>2.8.0-SNAPSHOT</restcomm.jain.slee.version>
 		<restcomm.jain.slee.jdbc.version>2.8.12</restcomm.jain.slee.jdbc.version>
 		<restcomm.jain.sip.ext.version>1.3.23</restcomm.jain.sip.ext.version>
 		<restcomm.jain.sip.ha.version>1.5.19</restcomm.jain.sip.ha.version>
