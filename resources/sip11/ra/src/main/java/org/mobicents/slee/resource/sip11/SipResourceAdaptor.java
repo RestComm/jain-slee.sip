@@ -1234,7 +1234,14 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 				properties.setProperty(LoadBalancerElector.IMPLEMENTATION_CLASS_NAME_PROPERTY, loadBalancerElector);
 			}
 			// define impl of the cache  of the HA stack
-			properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY,SipResourceAdaptorMobicentsSipCache.class.getName());
+            if (properties.getProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY) == null) {
+                if (tracer.isFineEnabled()) {
+                    tracer.fine(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY + " not set (sipra.properties). Using default cache class: "
+                            + SipResourceAdaptorMobicentsSipCache.class.getName());
+                }
+                properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY,
+                        SipResourceAdaptorMobicentsSipCache.class.getName());
+            }
 			this.sipFactory = SipFactory.getInstance();
 			this.sipFactory.setPathName("org.mobicents.ha");
 			this.sipStack = (ClusteredSipStack) this.sipFactory.createSipStack(properties);
