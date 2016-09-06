@@ -1236,7 +1236,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			// define impl of the cache  of the HA stack
             if (properties.getProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY) == null) {
                 if (tracer.isFineEnabled()) {
-                    tracer.fine(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY + " not set. Using default cache class: "
+                    tracer.fine(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY + " not set (sipra.properties). Using default cache class: "
                             + SipResourceAdaptorMobicentsSipCache.class.getName());
                 }
                 properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY,
