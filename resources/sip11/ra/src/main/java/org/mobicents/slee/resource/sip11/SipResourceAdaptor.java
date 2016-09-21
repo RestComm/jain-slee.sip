@@ -139,6 +139,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	private String sipBalancerHeartBeatServiceClassName;
 	private String balancers;
 	private String loadBalancerElector;
+	private String cacheClassName;
 	/**
 	 * default is true;
 	 */
@@ -1234,7 +1235,19 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 				properties.setProperty(LoadBalancerElector.IMPLEMENTATION_CLASS_NAME_PROPERTY, loadBalancerElector);
 			}
 			// define impl of the cache  of the HA stack
-			properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY,SipResourceAdaptorMobicentsSipCache.class.getName());
+			if (cacheClassName != null) {
+				properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY, cacheClassName);
+			} else {
+				if (properties.getProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY) == null) {
+					if (tracer.isFineEnabled()) {
+						tracer.fine(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY +
+								" not set (sipra.properties). Using default cache class: "
+								+ SipResourceAdaptorMobicentsSipCache.class.getName());
+					}
+					properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY,
+							SipResourceAdaptorMobicentsSipCache.class.getName());
+				}
+			}
 			this.sipFactory = SipFactory.getInstance();
 			this.sipFactory.setPathName("org.mobicents.ha");
 			this.sipStack = (ClusteredSipStack) this.sipFactory.createSipStack(properties);
@@ -1448,6 +1461,11 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		}
 		
 		this.port = (Integer) properties.getProperty(SIP_PORT_BIND).getValue();
+
+		Property cacheClassNameProp = properties.getProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY);
+		if (cacheClassNameProp != null) {
+			this.cacheClassName = (String) cacheClassNameProp.getValue();
+		}
 
 		this.stackAddress = (String) properties.getProperty(SIP_BIND_ADDRESS).getValue();
 		if (this.stackAddress.equals("")) {
