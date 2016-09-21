@@ -12,6 +12,11 @@
 			<property name="org.mobicents.ha.javax.sip.BALANCERS"
 				type="java.lang.String" value="127.0.0.1:5065" />
 			 -->
+
+			<!--
+			<property name="org.mobicents.ha.javax.sip.CACHE_CLASS_NAME"
+				type="java.lang.String" value="org.mobicents.ha.javax.sip.cache.NoCache" />
+			-->
 		</properties>
 		<ra-link name="SipRA" />
 	</ra-entity>
