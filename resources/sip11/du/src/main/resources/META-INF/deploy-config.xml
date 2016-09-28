@@ -5,6 +5,8 @@
 		entity-name="SipRA">
 		<properties>
 			<property name="javax.sip.PORT" type="java.lang.Integer" value="5060" />
+			<property name="javax.sip.TRANSPORT" type="java.lang.String" value="udp" />
+
 			<!-- the list of SIP balancers, in the form of "HOST:PORT",
 			separated by ";", it is only used if the heart beat service property is defined.
 			In case it is Restcomm SIP Load Balancer and it is configured with 2 ports,
