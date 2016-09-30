@@ -9,13 +9,13 @@
 	
 	<groupId>org.mobicents.servers.jainslee.sip</groupId>
 	<artifactId>restcomm-slee-sip</artifactId>
-	<version>2.8.0-SNAPSHOT</version>
+	<version>2.8.72</version>
 			
 	<packaging>pom</packaging>
 
 	<properties>
-		<restcomm.jain.slee.version>2.8.40</restcomm.jain.slee.version>
-		<restcomm.jain.slee.jdbc.version>2.8.11</restcomm.jain.slee.jdbc.version>
+		<restcomm.jain.slee.version>2.8.92</restcomm.jain.slee.version>
+		<restcomm.jain.slee.jdbc.version>2.8.12</restcomm.jain.slee.jdbc.version>
 		<restcomm.jain.sip.ext.version>1.3.23</restcomm.jain.sip.ext.version>
 		<restcomm.jain.sip.ha.version>1.5.19</restcomm.jain.sip.ha.version>
 		<restcomm.loadbalancer.version>2.0.22</restcomm.loadbalancer.version>
