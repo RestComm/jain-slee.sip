@@ -222,8 +222,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
         allowedTransports.add("ws");
         allowedTransports.add("wss");
 
-        transports.add("udp");
-
         // this.stackAddress = "127.0.0.1";
 		// this.stackPrefix = "gov.nist";
 	}
@@ -1489,6 +1487,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		}
 		
 		this.transportsProperty = (String) properties.getProperty(TRANSPORTS_BIND).getValue();
+		this.transports.clear();
 		for (String transport : this.transportsProperty.split(",")) {
 			this.transports.add(transport);
 		}
