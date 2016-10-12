@@ -501,9 +501,17 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 		}
 		
 		final DialogState currentState = wrappedDialog != null ? wrappedDialog.getState() : null;
+		boolean isServer = wrappedDialog != null ? wrappedDialog.isServer() : false; // is false ok, here?
 		boolean stackDoesNotFiresDialogTerminatedEvent = !isEnding()
-			&& !wrappedDialog.isServer() && (currentState == null || currentState == DialogState.TERMINATED);
-		wrappedDialog.delete();
+			&& !isServer() && (currentState == null || currentState == DialogState.TERMINATED);
+		
+		if (wrappedDialog != null) {
+			wrappedDialog.delete();
+		} else {
+			if (tracer.isFineEnabled()) {
+				tracer.fine("wrappedDialog is not set, skipping deletion.");
+			}
+		}
 		if (stackDoesNotFiresDialogTerminatedEvent) {
 			ra.processDialogTerminated(this);
 		}
