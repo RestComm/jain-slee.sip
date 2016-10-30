@@ -1217,8 +1217,24 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			final Properties properties = new Properties();
 			// load properties for the stack
 			properties.load(getClass().getResourceAsStream("sipra.properties"));
+
+			/* SipFactory recommends not to set javax.sip.IP_ADDRESS: The recommended behaviour is to not specify an
+			 * "javax.sip.IP_ADDRESS" property in the Properties argument, in this case the "javax.sip.STACK_NAME"
+			 * uniquely identifies the stack. A new stack instance will be returned for each different stack name
+			 * associated with a specific vendor implementation. The ListeningPoint is used to configure the IP Address
+			 * argument. or backwards compatability, if a "javax.sip.IP_ADDRESS" is supplied, this method ensures that
+			 * only one instance of a SipStack is returned to the application for that IP Address, independent of the
+			 * number of times this method is called. Different SipStack instances are returned for each different IP
+			 * address.
+			 *
+			 * Let's make sure no javax.sip_IP_ADDRESS is not used for SipStack creation, later on Listening Point will
+			 * be created as per provided IP_ADDRESS .
+			 */
+			if (properties.getProperty(SIP_BIND_ADDRESS) != null) {
+				properties.remove(SIP_BIND_ADDRESS);
+			}
+
 			// now load config properties
-			properties.setProperty(SIP_BIND_ADDRESS, this.stackAddress);
 			// setting the ra entity name as the stack name
 			properties.setProperty(STACK_NAME_BIND, raContext.getEntityName());
 			properties.setProperty(TRANSPORTS_BIND, transportsProperty);
@@ -1619,7 +1635,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		this.sleeEndpoint = null;
 		this.eventLookupFacility = null;
 		this.tracer = null;
-		this.tracer = null;
+		this.providerWrapper = null;
 	}
 
 	/**
