@@ -162,7 +162,7 @@ public class SleeSipProviderImpl implements SleeSipProvider {
 	 */
 	public SipURI getLocalSipURI(String transport) {
 		checkState();
-		SipUri sipURI = localSipURIs.get(localSipURIs);
+		SipUri sipURI = localSipURIs.get(transport);
 		if (sipURI == null) {
 			ListeningPoint lp = getListeningPoint(transport);
 			if (lp != null) {
