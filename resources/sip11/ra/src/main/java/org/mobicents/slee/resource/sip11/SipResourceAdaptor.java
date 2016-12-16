@@ -1231,6 +1231,13 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			 * be created as per provided IP_ADDRESS .
 			 */
 			if (properties.getProperty(SIP_BIND_ADDRESS) != null) {
+				if (tracer.isFineEnabled()) {
+					tracer.fine("The recommended behaviour is to not specify " +
+							"an javax.sip.IP_ADDRESS property in the Properties argument, " +
+							"in this case the javax.sip.STACK_NAME uniquely identifies the stack. " +
+							"See SipFactory recommendations for more details.");
+				}
+
 				properties.remove(SIP_BIND_ADDRESS);
 			}
 
