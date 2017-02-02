@@ -29,6 +29,9 @@ import gov.nist.javax.sip.stack.SIPClientTransaction;
 import gov.nist.javax.sip.stack.SIPServerTransaction;
 import gov.nist.javax.sip.stack.SIPTransaction;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -130,6 +133,8 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	private static final String BALANCERS = "org.mobicents.ha.javax.sip.BALANCERS";
 	
 	private static final String LOOSE_DIALOG_VALIDATION = "org.mobicents.javax.sip.LOOSE_DIALOG_VALIDATION";
+
+	public static final String SIPRA_PROPERTIES_LOCATION = "org.mobicents.slee.resource.sip11.SIPRA_PROPERTIES_LOCATION";
 	// Config Properties Values -------------------------------------------
 	
 	private int port;
@@ -140,6 +145,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	private String balancers;
 	private String loadBalancerElector;
 	private String cacheClassName;
+	private String sipRaPropertiesLocation;
 	/**
 	 * default is true;
 	 */
@@ -1214,61 +1220,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	public void raActive() {
 		
 		try {
-			final Properties properties = new Properties();
-			// load properties for the stack
-			properties.load(getClass().getResourceAsStream("sipra.properties"));
-
-			/* SipFactory recommends not to set javax.sip.IP_ADDRESS: The recommended behaviour is to not specify an
-			 * "javax.sip.IP_ADDRESS" property in the Properties argument, in this case the "javax.sip.STACK_NAME"
-			 * uniquely identifies the stack. A new stack instance will be returned for each different stack name
-			 * associated with a specific vendor implementation. The ListeningPoint is used to configure the IP Address
-			 * argument. or backwards compatability, if a "javax.sip.IP_ADDRESS" is supplied, this method ensures that
-			 * only one instance of a SipStack is returned to the application for that IP Address, independent of the
-			 * number of times this method is called. Different SipStack instances are returned for each different IP
-			 * address.
-			 *
-			 * Let's make sure no javax.sip_IP_ADDRESS is not used for SipStack creation, later on Listening Point will
-			 * be created as per provided IP_ADDRESS .
-			 */
-			if (properties.getProperty(SIP_BIND_ADDRESS) != null) {
-				if (tracer.isFineEnabled()) {
-					tracer.fine("The recommended behaviour is to not specify " +
-							"an javax.sip.IP_ADDRESS property in the Properties argument, " +
-							"in this case the javax.sip.STACK_NAME uniquely identifies the stack. " +
-							"See SipFactory recommendations for more details.");
-				}
-
-				properties.remove(SIP_BIND_ADDRESS);
-			}
-
-			// now load config properties
-			// setting the ra entity name as the stack name
-			properties.setProperty(STACK_NAME_BIND, raContext.getEntityName());
-			properties.setProperty(TRANSPORTS_BIND, transportsProperty);
-			properties.setProperty(SIP_PORT_BIND, Integer.toString(this.port));
-			if (sipBalancerHeartBeatServiceClassName != null) {
-				properties.setProperty(LOAD_BALANCER_HEART_BEAT_SERVICE_CLASS, sipBalancerHeartBeatServiceClassName);
-			}
-			if (balancers != null) {
-				properties.setProperty(BALANCERS, balancers);
-			}
-			if (loadBalancerElector != null) {
-				properties.setProperty(LoadBalancerElector.IMPLEMENTATION_CLASS_NAME_PROPERTY, loadBalancerElector);
-			}
-			// define impl of the cache  of the HA stack
-			if (cacheClassName != null) {
-				properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY, cacheClassName);
-			} else {
-				if (properties.getProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY) == null) {
-					if (tracer.isFineEnabled()) {
-						tracer.fine(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY +
-								" not set (sipra.properties). Using default cache class: "
-								+ SipResourceAdaptorMobicentsSipCache.class.getName());
-					}
-					properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY,
-							SipResourceAdaptorMobicentsSipCache.class.getName());
-				}
-			}
+			final Properties properties = prepareRaProperties();
 			this.sipFactory = SipFactory.getInstance();
 			this.sipFactory.setPathName("org.mobicents.ha");
 			this.sipStack = (ClusteredSipStack) this.sipFactory.createSipStack(properties);
@@ -1279,7 +1231,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			else {
 				activityManagement = new ClusteredSipActivityManagement(sipStack,ftRaContext.getReplicateData(true),raContext.getSleeTransactionManager(),this); 
 			}
-			
+
 			if (tracer.isFineEnabled()) {
 				tracer
 						.fine("---> START "
@@ -1307,16 +1259,88 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 
 		} catch (Throwable ex) {
 			String msg = "error in initializing resource adaptor";
-			tracer.severe(msg, ex);	
+			tracer.severe(msg, ex);
 			throw new RuntimeException(msg,ex);
-		}		
-		
+		}
+
 		if (tracer.isFineEnabled()) {
 			tracer.fine("Sip Resource Adaptor entity active.");
-		}	
-		
+		}
 	}
-	
+
+	private Properties prepareRaProperties() throws IOException {
+		final Properties properties = new Properties();
+		// load properties for the stack from the location specified in RA
+		// configuration or from classpath
+		if (sipRaPropertiesLocation != null) {
+			File f = new File(sipRaPropertiesLocation);
+			properties.load(new FileInputStream(f));
+			if (tracer.isInfoEnabled()) {
+				tracer.info("SIP Stack properties read from : "+sipRaPropertiesLocation);
+			}
+		} else {
+			properties.load(getClass().getResourceAsStream("sipra.properties"));
+			if (tracer.isInfoEnabled()) {
+				tracer.info("SIP Stack properties read from : "+getClass().getResource("sipra.properties").toString());
+			}
+		}
+
+
+			/* SipFactory recommends not to set javax.sip.IP_ADDRESS: The recommended behaviour is to not specify an
+			 * "javax.sip.IP_ADDRESS" property in the Properties argument, in this case the "javax.sip.STACK_NAME"
+			 * uniquely identifies the stack. A new stack instance will be returned for each different stack name
+			 * associated with a specific vendor implementation. The ListeningPoint is used to configure the IP Address
+			 * argument. or backwards compatability, if a "javax.sip.IP_ADDRESS" is supplied, this method ensures that
+			 * only one instance of a SipStack is returned to the application for that IP Address, independent of the
+			 * number of times this method is called. Different SipStack instances are returned for each different IP
+			 * address.
+			 *
+			 * Let's make sure no javax.sip_IP_ADDRESS is not used for SipStack creation, later on Listening Point will
+			 * be created as per provided IP_ADDRESS .
+			 */
+		if (properties.getProperty(SIP_BIND_ADDRESS) != null) {
+			if (tracer.isFineEnabled()) {
+				tracer.fine("The recommended behaviour is to not specify " +
+						"an javax.sip.IP_ADDRESS property in the Properties argument, " +
+						"in this case the javax.sip.STACK_NAME uniquely identifies the stack. " +
+						"See SipFactory recommendations for more details.");
+			}
+
+			properties.remove(SIP_BIND_ADDRESS);
+		}
+
+		// now load config properties
+		// setting the ra entity name as the stack name
+		properties.setProperty(STACK_NAME_BIND, raContext.getEntityName());
+		properties.setProperty(TRANSPORTS_BIND, transportsProperty);
+		properties.setProperty(SIP_PORT_BIND, Integer.toString(this.port));
+		if (sipBalancerHeartBeatServiceClassName != null) {
+			properties.setProperty(LOAD_BALANCER_HEART_BEAT_SERVICE_CLASS, sipBalancerHeartBeatServiceClassName);
+		}
+		if (balancers != null) {
+			properties.setProperty(BALANCERS, balancers);
+		}
+		if (loadBalancerElector != null) {
+			properties.setProperty(LoadBalancerElector.IMPLEMENTATION_CLASS_NAME_PROPERTY, loadBalancerElector);
+		}
+		// define impl of the cache  of the HA stack
+		if (cacheClassName != null) {
+			properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY, cacheClassName);
+		} else {
+			if (properties.getProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY) == null) {
+				if (tracer.isFineEnabled()) {
+					tracer.fine(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY +
+							" not set (sipra.properties). Using default cache class: "
+							+ SipResourceAdaptorMobicentsSipCache.class.getName());
+				}
+				properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY,
+						SipResourceAdaptorMobicentsSipCache.class.getName());
+			}
+		}
+		return properties;
+	}
+
+
 	/*
 	 * (non-Javadoc)
 	 * @see javax.slee.resource.ResourceAdaptor#raInactive()
@@ -1520,7 +1544,14 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		{
 			this.looseDialogSeqValidation = (Boolean) p.getValue();
 		}
-		
+
+
+		// read optional key specifying location of sipra.properties
+		p = properties.getProperty(SIPRA_PROPERTIES_LOCATION);
+		if (p != null && p.getValue()!=null) {
+			this.sipRaPropertiesLocation = (String) p.getValue();
+		}
+
 		tracer.info("RA entity named "+raContext.getEntityName()+" bound to port " + this.port);
 		
 	}
@@ -1585,6 +1616,14 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			if (!sipBalancerElectorClassName.equals("")) {
 				// check class is available
 				Class.forName(sipBalancerElectorClassName);				
+			}
+
+			// verify existence of sipra.properties file
+			if (sipRaPropertiesLocation!=null) {
+				File f = new File(sipRaPropertiesLocation);
+				if (!f.exists() || f.isDirectory()) {
+					throw new IllegalArgumentException(SIPRA_PROPERTIES_LOCATION+" config property points to non existing file: "+sipRaPropertiesLocation);
+				}
 			}
 		}
 		catch (Throwable e) {
