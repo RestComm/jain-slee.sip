@@ -19,6 +19,13 @@
 			<property name="org.mobicents.ha.javax.sip.CACHE_CLASS_NAME"
 				type="java.lang.String" value="org.mobicents.ha.javax.sip.cache.NoCache" />
 			-->
+
+			<!-- Absolute path to a file containing SIP stack configuration properties. This
+			     is optional property. If not set, SIP RA will search for sipra.properties in
+			     the class path.
+				<property name="org.mobicents.slee.resource.sip11.SIPRA_PROPERTIES_LOCATION"
+				type="java.lang.String" value="/opt/restcomm/jboss-5.1.0.GA/server.all.data/sipra.properties" />
+			-->
 		</properties>
 		<ra-link name="SipRA" />
 	</ra-entity>
