@@ -27,7 +27,7 @@ import java.sql.PreparedStatement;
 import javax.slee.facilities.Tracer;
 
 import org.mobicents.slee.example.sjr.data.DataSourceParentSbbLocalInterface;
-import org.mobicents.slee.resource.jdbc.task.JdbcTaskContext;
+import org.restcomm.slee.resource.jdbc.task.JdbcTaskContext;
 
 /**
  * 

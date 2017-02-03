@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.mobicents.slee.example.sjr.data.DataSourceParentSbbLocalInterface;
 import org.mobicents.slee.example.sjr.data.RegistrationBinding;
-import org.mobicents.slee.resource.jdbc.task.simple.SimpleJdbcTask;
+import org.restcomm.slee.resource.jdbc.task.simple.SimpleJdbcTask;
 
 /**
  * 
