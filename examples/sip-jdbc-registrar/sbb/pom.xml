@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>restcomm-slee-example-sip-jdbc-registrar</artifactId>
 		<groupId>org.mobicents.examples</groupId>
-		<version>2.8.0-SNAPSHOT</version>
+		<version>3.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>restcomm-slee-example-sip-jdbc-registrar-sbb</artifactId>
@@ -17,12 +17,11 @@
 		</dependency>
 		<dependency>
 			<artifactId>restcomm-slee-ra-jdbc-ratype</artifactId>
-			<groupId>org.mobicents.resources</groupId>
+			<groupId>org.restcomm.resources</groupId>
 		</dependency>
 		<dependency>
 			<groupId>org.mobicents.servers.jainslee.api</groupId>
 			<artifactId>jain-slee-11-ext</artifactId>
-			<!--<version>${project.version}</version>-->
 			<version>${restcomm.jain.slee.version}</version>
 		</dependency>
 	</dependencies>

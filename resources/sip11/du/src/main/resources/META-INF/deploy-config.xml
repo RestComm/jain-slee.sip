@@ -4,6 +4,7 @@
 		resource-adaptor-id="ResourceAdaptorID[name=JainSipResourceAdaptor,vendor=net.java.slee.sip,version=1.2]"
 		entity-name="SipRA">
 		<properties>
+			<property name="javax.sip.IP_ADDRESS" type="java.lang.String" value="127.0.0.1" />
 			<property name="javax.sip.PORT" type="java.lang.Integer" value="5060" />
 			<property name="javax.sip.TRANSPORT" type="java.lang.String" value="udp" />
 

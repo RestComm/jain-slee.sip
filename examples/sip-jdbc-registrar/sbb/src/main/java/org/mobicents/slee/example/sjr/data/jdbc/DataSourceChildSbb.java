@@ -39,11 +39,11 @@ import javax.slee.resource.ResourceAdaptorTypeID;
 import org.mobicents.slee.SbbContextExt;
 import org.mobicents.slee.example.sjr.data.DataSourceChildSbbLocalInterface;
 import org.mobicents.slee.example.sjr.data.DataSourceParentSbbLocalInterface;
-import org.mobicents.slee.resource.jdbc.JdbcActivity;
-import org.mobicents.slee.resource.jdbc.JdbcActivityContextInterfaceFactory;
-import org.mobicents.slee.resource.jdbc.JdbcResourceAdaptorSbbInterface;
-import org.mobicents.slee.resource.jdbc.event.JdbcTaskExecutionThrowableEvent;
-import org.mobicents.slee.resource.jdbc.task.simple.SimpleJdbcTaskResultEvent;
+import org.restcomm.slee.resource.jdbc.JdbcActivity;
+import org.restcomm.slee.resource.jdbc.JdbcActivityContextInterfaceFactory;
+import org.restcomm.slee.resource.jdbc.JdbcResourceAdaptorSbbInterface;
+import org.restcomm.slee.resource.jdbc.event.JdbcTaskExecutionThrowableEvent;
+import org.restcomm.slee.resource.jdbc.task.simple.SimpleJdbcTaskResultEvent;
 
 /**
  * 
