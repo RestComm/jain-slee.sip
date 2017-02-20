@@ -32,12 +32,11 @@ Instructions for downloading, installing and using Git can be found at http://gi
 +
 Use Git to checkout a specific release source, the Git repository URL is {this-trunk-source-code-url}, then switch to the specific release version, lets consider {this-version}.
 +
-[source]
+[source,subs="attributes"]
 ----
-
-				    [usr]$ git clone git@github.com:RestComm/jain-slee.sip.git
-				    [usr]$ cd jain-slee-sip
-				    [usr]$ git checkout tags/{this-version}
+[usr]$ git clone git@github.com:RestComm/jain-slee.sip.git
+[usr]$ cd jain-slee-sip
+[usr]$ git checkout tags/{this-version}
 ----
 
 . Building the source code
@@ -47,11 +46,10 @@ Instructions for using Maven2, including install, can be found at http://maven.a
 +
 Use Maven to build the deployable unit binary.
 +
-[source]
+[source,subs="attributes"]
 ----
-
-				    [usr]$ cd resources/
-				    [usr]$ mvn install
+[usr]$ cd resources/
+[usr]$ mvn install
 ----
 +
 Once the process finishes you should have the `deployable-unit` jar file in the [path]_target_ directory, if {this-platform}  JAIN SLEE is installed and environment variable JBOSS_HOME is pointing to its underlying {jee-platform} directory, then the deployable unit jar will also be deployed in the container.
@@ -66,8 +64,7 @@ If already performed, the following should be used in order to switch back to th
 
 [source]
 ----
-
-		    [usr]$ git checkout master
+[usr]$ git checkout master
 ----
 
 [[_install]]
@@ -80,7 +77,7 @@ To install the Resource Adaptor simply execute provided ant script [path]_build.
 [usr]$ ant
 ----
 
-The script will copy the RA deployable unit jar to the `default` {this-platform} JAIN SLEE server profile deploy directory, to deploy to another server profile use the argument `-Dnode=`.
+The script will copy the RA deployable unit jar to the default deploy folder <literal>standalone/deployments</literal>.
 
 [[_uninstall]]
 == Uninstalling {this-platform} JAIN SLEE {this-ra} Resource Adaptor
@@ -92,4 +89,4 @@ To uninstall the Resource Adaptor simply execute provided ant script [path]_buil
 [usr]$ ant undeploy
 ----
 
-The script will delete the RA deployable unit jar from the `default` {this-platform} JAIN SLEE server profile deploy directory, to undeploy from another server profile use the argument `-Dnode=`.
+The script will delete the RA deployable unit jar from the default deploy folder <literal>standalone/deployments</literal>.

@@ -21,7 +21,7 @@ There are three properties which define how the RA connects to {this-platform} S
 org.mobicents.ha.javax.sip.BALANCERS::
   the property must be configured with the list of load balancer IP address and internal ports.
   As an example, suppose a single {this-platform} SIP Load Balancer is running with IP `192.168.0.1` and internal port `5065`.
-  The property would be set with a value of``192.168.0.1:5065``.
+  The property would be set with a value of ``192.168.0.1:5065``.
   To specify multiple balancers use `;` as a separator.
 
 org.mobicents.ha.javax.sip.LoadBalancerHeartBeatingServiceClassName::
