@@ -30,13 +30,13 @@ The RA requires {this-platform} JAIN SLEE properly set.
 IMPORTANT: Git is used to manage {this-platform} JAIN SLEE source code.
 Instructions for downloading, installing and using Git can be found at http://git-scm.com/
 +
-Use Git to checkout a specific release source, the Git repository URL is {this-trunk-source-code-url}, then switch to the specific release version, lets consider {this-version}.
+Use Git to checkout a specific release source, the Git repository URL is {this-trunk-source-code-url}, then switch to the specific release version, lets consider {project-version}.
 +
 [source,subs="attributes"]
 ----
 [usr]$ git clone git@github.com:RestComm/jain-slee.sip.git
 [usr]$ cd jain-slee-sip
-[usr]$ git checkout tags/{this-version}
+[usr]$ git checkout tags/{project-version}
 ----
 
 . Building the source code
