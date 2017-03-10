@@ -10,17 +10,6 @@
     <artifactId>sip11-ra</artifactId>
     <name>Restcomm :: Resources :: ${project.artifactId}</name>
 
-    <properties>
-        <restcomm.commons.version>2.0.147</restcomm.commons.version>
-        <metrics.version>3.1.0</metrics.version>
-        <slf4j.version>1.5.5</slf4j.version>
-
-        <restcomm.name>Restcomm</restcomm.name>
-        <maven.build.timestamp.format>yyyyMMddHHmm</maven.build.timestamp.format>
-        <release.timestamp>${maven.build.timestamp}</release.timestamp>
-        <restcomm.statistics.server>https://statistics.restcomm.com/rest/</restcomm.statistics.server>
-    </properties>
-		
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
@@ -49,28 +38,6 @@
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <!-- Restcomm Statistics -->
-        <dependency>
-            <groupId>org.restcomm.commons</groupId>
-            <artifactId>restcomm-statistics</artifactId>
-            <version>${restcomm.commons.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>${slf4j.version}</version>
         </dependency>
     </dependencies>
 

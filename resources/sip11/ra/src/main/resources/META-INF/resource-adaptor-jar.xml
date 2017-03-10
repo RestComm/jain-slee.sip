@@ -33,6 +33,8 @@
                     org.mobicents.slee.resource.sip11.SipResourceAdaptorStatisticsUsageParameters
                 </resource-adaptor-usage-parameters-interface-name>
                 <usage-parameter name="calls" notifications-enabled="False"/>
+                <usage-parameter name="messages" notifications-enabled="False"/>
+                <usage-parameter name="seconds" notifications-enabled="False"/>
             </resource-adaptor-usage-parameters-interface>
         </resource-adaptor-classes>
         
