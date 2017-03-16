@@ -195,7 +195,7 @@ public class SipResourceAdaptor implements
 	private SleeEndpoint sleeEndpoint;
 	private EventLookupFacility eventLookupFacility;
 	private SipResourceAdaptorStatisticsUsageParameters defaultUsageParameters;
-	private SipResourceAdaptorStatisticsUsageParameters statisticsUsageParameters;
+	//private SipResourceAdaptorStatisticsUsageParameters statisticsUsageParameters;
 	
 	/**
 	 * 
@@ -265,12 +265,12 @@ public class SipResourceAdaptor implements
 
 		final String method = req.getRequest().getMethod();
 		if (Request.INVITE.equalsIgnoreCase(method)) {
-			//this.defaultUsageParameters.incrementCalls(1);
-			this.statisticsUsageParameters.incrementCalls(1);
+			this.defaultUsageParameters.incrementCalls(1);
+			//this.statisticsUsageParameters.incrementCalls(1);
 		}
 		if (Request.MESSAGE.equalsIgnoreCase(method)) {
-			//this.defaultUsageParameters.incrementMessages(1);
-			this.statisticsUsageParameters.incrementMessages(1);
+			this.defaultUsageParameters.incrementMessages(1);
+			//this.statisticsUsageParameters.incrementMessages(1);
 		}
 
 		// get dialog wrapper
@@ -1241,6 +1241,7 @@ public class SipResourceAdaptor implements
 	public void raActive() {
 		
 		try {
+			/*
 			if (SleeContainer.lookupFromJndi() != null) {
 				ResourceManagement resourceManagement = SleeContainer.lookupFromJndi().getResourceManagement();
 				tracer.info("resourceManagement: " + resourceManagement);
@@ -1258,6 +1259,7 @@ public class SipResourceAdaptor implements
 					System.out.println("statisticsUsageParameters: " + this.statisticsUsageParameters);
 				}
 			}
+			*/
 
 			final Properties properties = prepareRaProperties();
 			this.sipFactory = SipFactory.getInstance();
