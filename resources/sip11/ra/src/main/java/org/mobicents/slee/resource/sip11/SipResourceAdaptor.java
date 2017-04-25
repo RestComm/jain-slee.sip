@@ -32,7 +32,6 @@ import gov.nist.javax.sip.stack.SIPTransaction;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -42,7 +41,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.management.ObjectName;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.DialogState;
@@ -101,8 +99,6 @@ import net.java.slee.resource.sip.DialogTimeoutEvent;
 import org.mobicents.ha.javax.sip.ClusteredSipStack;
 import org.mobicents.ha.javax.sip.LoadBalancerElector;
 import org.mobicents.ha.javax.sip.cache.SipResourceAdaptorMobicentsSipCache;
-import org.mobicents.slee.container.SleeContainer;
-import org.mobicents.slee.container.management.ResourceManagement;
 import org.mobicents.slee.container.resource.SleeEndpoint;
 import org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptor;
 import org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptorContext;
@@ -195,8 +191,7 @@ public class SipResourceAdaptor implements
 	private SleeEndpoint sleeEndpoint;
 	private EventLookupFacility eventLookupFacility;
 	private SipResourceAdaptorStatisticsUsageParameters defaultUsageParameters;
-	//private SipResourceAdaptorStatisticsUsageParameters statisticsUsageParameters;
-	
+
 	/**
 	 * 
 	 */
@@ -262,15 +257,12 @@ public class SipResourceAdaptor implements
 		}
 
 		// Restcomm Statistics
-
 		final String method = req.getRequest().getMethod();
 		if (Request.INVITE.equalsIgnoreCase(method)) {
 			this.defaultUsageParameters.incrementCalls(1);
-			//this.statisticsUsageParameters.incrementCalls(1);
 		}
 		if (Request.MESSAGE.equalsIgnoreCase(method)) {
 			this.defaultUsageParameters.incrementMessages(1);
-			//this.statisticsUsageParameters.incrementMessages(1);
 		}
 
 		// get dialog wrapper
@@ -1241,26 +1233,6 @@ public class SipResourceAdaptor implements
 	public void raActive() {
 		
 		try {
-			/*
-			if (SleeContainer.lookupFromJndi() != null) {
-				ResourceManagement resourceManagement = SleeContainer.lookupFromJndi().getResourceManagement();
-				tracer.info("resourceManagement: " + resourceManagement);
-
-				if (resourceManagement != null) {
-					ObjectName usageMBeanName = resourceManagement.getResourceUsageMBean(raContext.getEntityName());
-					System.out.println("RA UsageMBean: " + usageMBeanName);
-
-					ManagementFactory.getPlatformMBeanServer()
-							.invoke(usageMBeanName, "createUsageParameterSet",
-									new Object[] {"statistics"}, new String[] {String.class.getName()});
-
-					this.statisticsUsageParameters = (SipResourceAdaptorStatisticsUsageParameters)
-							raContext.getUsageParameterSet("statistics");
-					System.out.println("statisticsUsageParameters: " + this.statisticsUsageParameters);
-				}
-			}
-			*/
-
 			final Properties properties = prepareRaProperties();
 			this.sipFactory = SipFactory.getInstance();
 			this.sipFactory.setPathName("org.mobicents.ha");
@@ -1715,8 +1687,6 @@ public class SipResourceAdaptor implements
 		try {
 			this.defaultUsageParameters =
 					(SipResourceAdaptorStatisticsUsageParameters) raContext.getDefaultUsageParameterSet();
-
-			tracer.info("defaultUsageParameters: " + this.defaultUsageParameters);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
