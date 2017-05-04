@@ -117,10 +117,6 @@ import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapper;
 import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapperAppData;
 import org.mobicents.slee.resource.sip11.wrappers.Wrapper;
 
-import org.restcomm.commons.statistics.reporter.RestcommStatsReporter;
-import com.codahale.metrics.Counter;
-import com.codahale.metrics.MetricRegistry;
-
 public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceAdaptor<SipActivityHandle, String> {
 
 	// Config Properties Names -------------------------------------------
@@ -142,17 +138,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	public static final String SIPRA_PROPERTIES_LOCATION = "org.mobicents.slee.resource.sip11.SIPRA_PROPERTIES_LOCATION";
 
 	// Config Properties Values -------------------------------------------
-
-	// Restcomm Statistics
-	protected static final String STATISTICS_SERVER = "statistics.server";
-	protected static final String DEFAULT_STATISTICS_SERVER = "https://statistics.restcomm.com/rest/";
-
-	private RestcommStatsReporter statsReporter = new RestcommStatsReporter();
-	private MetricRegistry metrics = RestcommStatsReporter.getMetricRegistry();
-	// define metric name
-	private Counter counterCalls = metrics.counter("calls");
-	private Counter counterSeconds = metrics.counter("seconds");
-	private Counter counterMessages = metrics.counter("messages");
 
 	private int port;
 	private Set<String> transports = new HashSet<String>();
@@ -269,15 +254,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			tracer.info("Received Request:\n"+req.getRequest());
 		}
 
-		// Restcomm Statistics
-		final String method = req.getRequest().getMethod();
-		if (Request.INVITE.equalsIgnoreCase(method)) {
-			this.incCalls();
-		}
-		if (Request.MESSAGE.equalsIgnoreCase(method)) {
-			this.incMessages();
-		}
-		
 		// get dialog wrapper
 		final Dialog d = req.getDialog();
 		final DialogWrapper dw = getDialogWrapper(d);
@@ -1259,31 +1235,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			}
 
 
-			// Restcomm Statistics
-			if (statsReporter==null)
-				statsReporter = new RestcommStatsReporter();
-			String statisticsServer = Version.getVersionProperty(STATISTICS_SERVER);
-			if (statisticsServer == null || !statisticsServer.contains("http")) {
-				statisticsServer = DEFAULT_STATISTICS_SERVER;
-			}
-			//define remote server address (optionally)
-			statsReporter.setRemoteServer(statisticsServer);
-			String projectName = System.getProperty("RestcommProjectName", "sipra");
-			String projectType = System.getProperty("RestcommProjectType", "community");
-			String projectVersion = System.getProperty("RestcommProjectVersion",
-					Version.getVersionProperty(Version.RELEASE_VERSION));
-			if (tracer.isFineEnabled()) {
-				tracer.fine("Restcomm Stats " + projectName + " " + projectType + " " + projectVersion);
-			}
-			statsReporter.setProjectName(projectName);
-			statsReporter.setProjectType(projectType);
-			statsReporter.setVersion(projectVersion);
-			//define periodicy - default to once a day
-			statsReporter.start(86400, TimeUnit.SECONDS);
-
-			Version.printVersion();
-
-
 			if (tracer.isFineEnabled()) {
 				tracer
 						.fine("---> START "
@@ -1398,9 +1349,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 * @see javax.slee.resource.ResourceAdaptor#raInactive()
 	 */
 	public void raInactive() {
-
-		statsReporter.stop();
-		statsReporter = null;
 		
 		this.provider.removeSipListener(this);
 		
@@ -1445,19 +1393,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		
 	}
 
-	// Restcomm Statistics
-	public void incCalls() {
-		counterCalls.inc();
-	}
-
-	public void incMessages() {
-		counterMessages.inc();
-	}
-
-	public void incSeconds(long seconds) {
-		counterSeconds.inc(seconds);
-	}
-	
 	//	EVENT PROCESSING CALLBACKS
 	
     /*
