@@ -32,6 +32,7 @@ import gov.nist.javax.sip.stack.SIPTransaction;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.DialogState;
@@ -232,6 +235,23 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 
         // this.stackAddress = "127.0.0.1";
 		// this.stackPrefix = "gov.nist";
+	}
+
+	private String getJBossAddress() {
+		String address = null;
+		//address = System.getProperty("jboss.bind.address");
+
+		Object inetAddress = null;
+		try {
+			inetAddress = ManagementFactory.getPlatformMBeanServer()
+					.getAttribute(new ObjectName("jboss.as:interface=public"), "inet-address");
+		} catch (Exception e) {
+		}
+		if (inetAddress != null) {
+			address = inetAddress.toString();
+		}
+
+		return address;
 	}
 
 	// XXX -- SipListenerMethods - here we process incoming data
@@ -1517,7 +1537,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 
 		this.stackAddress = (String) properties.getProperty(SIP_BIND_ADDRESS).getValue();
 		if (this.stackAddress.equals("")) {
-			this.stackAddress = System.getProperty("jboss.bind.address");				
+			this.stackAddress = this.getJBossAddress();
 		}
 
 		this.balancers = (String) properties.getProperty(BALANCERS).getValue();
@@ -1585,7 +1605,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			// get host
 			String stackAddress = (String) properties.getProperty(SIP_BIND_ADDRESS).getValue();
 			if (stackAddress.equals("")) {
-				stackAddress = System.getProperty("jboss.bind.address");				
+				stackAddress = this.getJBossAddress();
 			}
 			// try to open socket
 			InetSocketAddress sockAddress = new InetSocketAddress(stackAddress,
