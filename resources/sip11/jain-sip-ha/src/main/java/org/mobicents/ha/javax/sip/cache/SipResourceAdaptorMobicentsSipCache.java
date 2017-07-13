@@ -23,6 +23,7 @@
 package org.mobicents.ha.javax.sip.cache;
 
 import org.mobicents.slee.container.SleeContainer;
+import org.restcomm.cluster.MobicentsClusterFactory;
 
 /**
  * This {@link SipCache} relies on the SLEE container cluster {@link MobicentsCache}.
@@ -38,7 +39,10 @@ public class SipResourceAdaptorMobicentsSipCache extends MobicentsSipCache {
 	public SipResourceAdaptorMobicentsSipCache() {
 		super();
 		if (SleeContainer.lookupFromJndi() != null) {
-			cluster = SleeContainer.lookupFromJndi().getCluster();
+		    MobicentsClusterFactory clusterFactory = SleeContainer.lookupFromJndi().getClusterFactory();
+		    ctCluster = clusterFactory.getCluster(getName() + "_" + CLIENT_TRANSACTION_APPENDER);
+		    stCluster = clusterFactory.getCluster(getName() + "_" + SERVER_TRANSACTION_APPENDER);
+		    sdCluster = clusterFactory.getCluster(getName() + "_" + SIP_DIALOG_APPENDER);
 		}
 	}
 	
