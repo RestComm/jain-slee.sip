@@ -39,10 +39,7 @@ public class SipResourceAdaptorMobicentsSipCache extends MobicentsSipCache {
 	public SipResourceAdaptorMobicentsSipCache() {
 		super();
 		if (SleeContainer.lookupFromJndi() != null) {
-		    MobicentsClusterFactory clusterFactory = SleeContainer.lookupFromJndi().getClusterFactory();
-		    ctCluster = clusterFactory.getCluster(getName() + "_" + CLIENT_TRANSACTION_APPENDER);
-		    stCluster = clusterFactory.getCluster(getName() + "_" + SERVER_TRANSACTION_APPENDER);
-		    sdCluster = clusterFactory.getCluster(getName() + "_" + SIP_DIALOG_APPENDER);
+		    clusterFactory = SleeContainer.lookupFromJndi().getClusterFactory();
 		}
 	}
 	

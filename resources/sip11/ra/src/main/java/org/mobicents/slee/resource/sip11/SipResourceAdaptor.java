@@ -1398,11 +1398,8 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		}
 
 		this.providerWrapper.raInactive();
-		System.out.println("calling sipStack.stop() on " + sipStack.getClass().getSimpleName());
 		this.sipStack.stop();
-		
-		System.out.println("DONE");
-        
+
 		if (tracer.isFineEnabled()) {
 			tracer.fine("Sip Resource Adaptor entity inactive.");
 		}		
