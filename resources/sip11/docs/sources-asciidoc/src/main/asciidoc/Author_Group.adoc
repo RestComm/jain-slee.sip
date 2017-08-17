@@ -1,0 +1,10 @@
+[[_author_group]]
+= Authors
+
+	Bartosz Baranowski {author-email-bartosz}
+
+	Eduardo Martins {author-email-eduardo}
+
+	Grzegorz Figiel www.pro-ids.com grzegorz.figiel (at) pro-ids.com
+
+	Dominik Blacha www.pro-ids.com dominik.blacha (at) pro-ids.com

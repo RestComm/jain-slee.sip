@@ -28,7 +28,29 @@ import gov.nist.javax.sip.message.SIPResponse;
 import gov.nist.javax.sip.stack.SIPClientTransaction;
 import gov.nist.javax.sip.stack.SIPServerTransaction;
 import gov.nist.javax.sip.stack.SIPTransaction;
-
+import net.java.slee.resource.sip.CancelRequestEvent;
+import net.java.slee.resource.sip.DialogForkedEvent;
+import net.java.slee.resource.sip.DialogTimeoutEvent;
+import org.mobicents.ha.javax.sip.ClusteredSipStack;
+import org.mobicents.ha.javax.sip.LoadBalancerElector;
+import org.mobicents.ha.javax.sip.cache.SipResourceAdaptorMobicentsSipCache;
+import org.mobicents.slee.container.resource.GracefullyStopableResourceAdaptor;
+import org.mobicents.slee.container.resource.SleeEndpoint;
+import org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptor;
+import org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptorContext;
+import org.mobicents.slee.resource.sip11.wrappers.ACKDummyTransaction;
+import org.mobicents.slee.resource.sip11.wrappers.ClientDialogWrapper;
+import org.mobicents.slee.resource.sip11.wrappers.ClientTransactionWrapper;
+import org.mobicents.slee.resource.sip11.wrappers.DialogWrapper;
+import org.mobicents.slee.resource.sip11.wrappers.DialogWrapperAppData;
+import org.mobicents.slee.resource.sip11.wrappers.RequestEventWrapper;
+import org.mobicents.slee.resource.sip11.wrappers.ResponseEventWrapper;
+import org.mobicents.slee.resource.sip11.wrappers.ServerTransactionWrapper;
+import org.mobicents.slee.resource.sip11.wrappers.ServerTransactionWrapperAppData;
+import org.mobicents.slee.resource.sip11.wrappers.TimeoutEventWrapper;
+import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapper;
+import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapperAppData;
+import org.mobicents.slee.resource.sip11.wrappers.Wrapper;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -41,7 +63,6 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
 import javax.sip.DialogState;
@@ -92,32 +113,16 @@ import javax.slee.resource.Marshaler;
 import javax.slee.resource.ReceivableService;
 import javax.slee.resource.ResourceAdaptorContext;
 import javax.slee.resource.UnrecognizedActivityHandleException;
+import java.net.DatagramSocket;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 
-import net.java.slee.resource.sip.CancelRequestEvent;
-import net.java.slee.resource.sip.DialogForkedEvent;
-import net.java.slee.resource.sip.DialogTimeoutEvent;
-
-import org.mobicents.ha.javax.sip.ClusteredSipStack;
-import org.mobicents.ha.javax.sip.LoadBalancerElector;
-import org.mobicents.ha.javax.sip.cache.SipResourceAdaptorMobicentsSipCache;
-import org.mobicents.slee.container.resource.SleeEndpoint;
-import org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptor;
-import org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptorContext;
-import org.mobicents.slee.resource.sip11.wrappers.ACKDummyTransaction;
-import org.mobicents.slee.resource.sip11.wrappers.ClientDialogWrapper;
-import org.mobicents.slee.resource.sip11.wrappers.ClientTransactionWrapper;
-import org.mobicents.slee.resource.sip11.wrappers.DialogWrapper;
-import org.mobicents.slee.resource.sip11.wrappers.DialogWrapperAppData;
-import org.mobicents.slee.resource.sip11.wrappers.RequestEventWrapper;
-import org.mobicents.slee.resource.sip11.wrappers.ResponseEventWrapper;
-import org.mobicents.slee.resource.sip11.wrappers.ServerTransactionWrapper;
-import org.mobicents.slee.resource.sip11.wrappers.ServerTransactionWrapperAppData;
-import org.mobicents.slee.resource.sip11.wrappers.TimeoutEventWrapper;
-import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapper;
-import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapperAppData;
-import org.mobicents.slee.resource.sip11.wrappers.Wrapper;
-
-public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceAdaptor<SipActivityHandle, String> {
+public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceAdaptor<SipActivityHandle, String>, GracefullyStopableResourceAdaptor {
 
 	// Config Properties Names -------------------------------------------
 
@@ -147,6 +152,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	private String balancers;
 	private String loadBalancerElector;
 	private String cacheClassName;
+	boolean raIsStopping = false;
 	private String sipRaPropertiesLocation;
 	/**
 	 * default is true;
@@ -358,7 +364,16 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			}			
 			return true;
 		} catch (Exception e) {
+			if (raIsStopping) {
+				if (tracer.isFinestEnabled()) {
+					tracer.finest("Activity error in graceful shutdown mode (remove activity and continue): "+e.getMessage(), e);
+				}
+				activityEnded(activity.getActivityHandle());
+				return true;
+			}
+			else {
 			tracer.severe(e.getMessage(),e);
+		}
 		}
 		return false;
 	}
@@ -491,12 +506,15 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 				stw = new ServerTransactionWrapper(st, this);
 			}
 		}
-		
+		boolean isNewActivity = false;
 		Wrapper activity = dw;
 		if (activity == null) {
+			isNewActivity = true;
+			if (!raIsStopping) {
 			activity = stw;
 			stw.setActivity(true);
 			addActivity(activity);
+		}
 		}
 		
 		int eventFlags = DEFAULT_EVENT_FLAGS;
@@ -519,7 +537,24 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 				tracer.severe("failed to terminate server tx", e);
 			}
 			processTransactionTerminated(stw);
-		} else {
+		} 
+		else if (raIsStopping && isNewActivity){
+			CallIdHeader callIdHeader = (CallIdHeader) req.getRequest().getHeader(CallIdHeader.NAME);
+			tracer.warning("RA is in graceful shutdown mode, dropping new activity (method="+req.getRequest().getMethod()+", callId=" + callIdHeader.getCallId());
+			try {
+				Response rejectResponse = this.providerWrapper.getMessageFactory().createResponse(Response.SERVICE_UNAVAILABLE, req.getRequest());
+				stw.sendResponse(rejectResponse);
+			} catch (Exception e) {
+				tracer.severe("failed to send 503 response for rejected session", e);
+			}
+			try {
+				stw.terminate();
+			} catch (ObjectInUseException e) {
+				tracer.severe("failed to terminate server tx", e);
+			}
+			processTransactionTerminated(stw);
+		}
+		else {
 			try {
 				fireEvent(activity.getActivityHandle(), eventType, rew, activity.getEventFiringAddress(), eventFlags);			
 			} catch (Throwable e) {
@@ -1175,6 +1210,18 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			}
 			return true;
 		}
+		catch (IllegalStateException iex){
+			if (raIsStopping) {
+				if(tracer.isFineEnabled()) {
+					tracer.fine("Graceful shutdown mode - skipping activity start error", iex);
+				}
+				return true;
+			}
+			else {
+				tracer.severe("Failed to start activity",iex);
+				return false;
+			}
+		}
 		catch (Throwable e) {
 			tracer.severe("Failed to start activity",e);
 			return false;
@@ -1268,7 +1315,8 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 
 		if (tracer.isFineEnabled()) {
 			tracer.fine("Sip Resource Adaptor entity active.");
-		}
+		}	
+		raIsStopping = false;
 	}
 
 	private Properties prepareRaProperties() throws IOException {
@@ -1350,6 +1398,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 */
 	public void raInactive() {
 		
+		if(this.provider != null) {
 		this.provider.removeSipListener(this);
 		
 		ListeningPoint[] listeningPoints = this.provider.getListeningPoints();
@@ -1374,6 +1423,9 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 				}
 			}
 		}
+		} else {
+			tracer.warning("Sip Resource Adaptor provider is null while deactivating.");
+		}
 
 		this.providerWrapper.raInactive();
 		
@@ -1390,7 +1442,18 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		if (tracer.isFineEnabled()) {
 			tracer.fine("Object for entity named "+raContext.getEntityName()+" is stopping. "+activityManagement);
 		}
+	}
 		
+	/*
+	 * (non-Javadoc)
+	 * @see org.mobicents.slee.container.resource.GracefullyStopableResourceAdaptor#gracefulRaStopping()
+	 */
+	public void gracefulRaStopping() {
+		if (tracer.isFineEnabled()) {
+			tracer.fine("Graceful stop requested for "+raContext.getEntityName());
+	}
+		raIsStopping = true;
+		raStopping();
 	}
 
 	//	EVENT PROCESSING CALLBACKS
@@ -1556,14 +1619,14 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		}
 
 		tracer.info("RA entity named "+raContext.getEntityName()+" bound to port " + this.port);
-		
+
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see javax.slee.resource.ResourceAdaptor#raUnconfigure()
 	 */
-	public void raUnconfigure() {		
+	public void raUnconfigure() {
 		this.port = -1;
 		this.stackAddress = null;
 		this.transports.clear();
@@ -1869,4 +1932,5 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	public void unsetFaultTolerantResourceAdaptorContext() {
 		this.ftRaContext = null;
 	}
+
 }

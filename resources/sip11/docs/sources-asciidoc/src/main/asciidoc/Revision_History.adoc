@@ -4,6 +4,12 @@
 [appendix]
 = Revision History
 
-	
+.Revision History
+[cols="1,1,1,1", frame="all", options="header"]
+|===
+| Revision number | Date | Author | Description
+| 1.0 | 2009-12-30 | Eduardo Martins | Creation of the {this-platform} JAIN SLEE SIP11 RA User Guide.
+| 1.1 | 2016-09-29 | ProIDS | Graceful Stop feature chapter added.
+|===
 
 :sectnums:

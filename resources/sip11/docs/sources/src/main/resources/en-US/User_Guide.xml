@@ -10,6 +10,7 @@
   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="ra/Chapter-Resource_Adaptor.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Setup.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Clustering.xml"/>
+  <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Chapter-Graceful_Stop.xml"/>
   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="Revision_History.xml"/>
   <index/>
 </book>

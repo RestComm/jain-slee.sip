@@ -15,4 +15,17 @@
 		<surname>Martins</surname>
 		<email>&AUTHOR.EMAIL.EDUARDO;</email>
 	</author>
+	<author>
+		<firstname>Grzegorz</firstname>
+		<surname>Figiel</surname>
+		<affiliation>ProIDS www.pro-ids.com</affiliation>
+		<email>grzegorz.figiel (at) pro-ids.com</email>
+	</author>
+	<author>
+		<firstname>Dominik</firstname>
+		<surname>Blacha</surname>
+		<affiliation>ProIDS www.pro-ids.com</affiliation>
+		<email>dominik.blacha (at) pro-ids.com</email>
+	</author>
+
 </authorgroup>
