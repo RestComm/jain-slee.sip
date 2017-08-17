@@ -1,0 +1,12 @@
+[[_ra_graceful_stop]]
+= Graceful Stop
+
+[[_ra_graceful_stop_support]]
+== Graceful Stop support
+
+The RA supports Graceful container stop feature. In Graceful Stop state the RA rejects incoming initial events - it rejects new activities creation.
+
+[[_ra_graceful_stop_response]]
+== Graceful Stop reject support
+
+When the RA is in Graceful Stopping mode the `SIP/2.0 503 Service unavailable` is send as a response for every new dialog creation request.

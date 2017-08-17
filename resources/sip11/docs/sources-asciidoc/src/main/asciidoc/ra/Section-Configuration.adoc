@@ -13,9 +13,14 @@ The following table enumerates the configuration properties:
 | javax.sip. OUTBOUND_PROXY | sets the outbound proxy of the SIP Stack. The format for this string is "ipaddress:port/transport" i.e. 129.1.22.333:5060/UDP. This property is optional | java.lang.String |
 | javax.sip. PORT | the port to which the SIP stack should listen | java.lang.Integer | 5060
 | javax.sip. TRANSPORT | the list of supported transports, separated with "," | java.lang.String | UDP
-| org.mobicents. ha.javax.sip. BALANCERS | the list of SIP balancers, in the form of "HOST:PORT", separated by ";", it is only used if the heart beat service property is defined | java.lang.String |  
-| org.mobicents. ha.javax.sip. LoadBalancer HeartBeating ServiceClassName | the name of the class responsible for the heart beats exchanged with the platform's SIP Balancer - if not specified the JAIN SIP HA stack won't use such feature | java.lang.String | 	 
-| org.mobicents. javax.sip. LOOSE_DIALOG _VALIDATION | controls validation of CSeq number for dialog messages. Set to true allows out of sequence messages to be accepted. | java.lang.Boolean | 
+| org.mobicents. ha.javax.sip. BALANCERS | the list of SIP balancers, in the form of "HOST:PORT", separated by ";", it is only used if the heart beat service property is defined | java.lang.String |
+| org.mobicents. ha.javax.sip. LoadBalancer HeartBeating ServiceClassName | the name of the class responsible for the heart beats exchanged with the platform's SIP Balancer - if not specified the JAIN SIP HA stack won't use such feature | java.lang.String |
+| org.mobicents. javax.sip. LOOSE_DIALOG _VALIDATION | controls validation of CSeq number for dialog messages. Set to true allows out of sequence messages to be accepted. | java.lang.Boolean |
+| defaultActiveSessionsThreshold | This property defines container default Active Sessions Threshold (AST) value in graceful shutdown resource adaptor mode.
+| java.lang.Integer |
+| defaultGracefulShutdownWaitTime | This property defines the maximum time period when the container is waiting for finishing existing sessions/activities in
+graceful shutdown resource adaptor mode.
+| java.lang.Long |
 |===
 
 IMPORTANT: Spaces where introduced in `Property Name` column values, to correctly render the table.
