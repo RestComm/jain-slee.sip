@@ -1,6 +1,6 @@
 /*
  * TeleStax, Open Source Cloud Communications
- * Copyright 2011-2014, Telestax Inc and individual contributors
+ * Copyright 2011-2017, Telestax Inc and individual contributors
  * by the @authors tag.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -15,19 +15,9 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
- * This file incorporates work covered by the following copyright contributed under the GNU LGPL : Copyright 2007-2011 Red Hat.
  */
-package org.mobicents.slee.resource.sip11;
 
-import gov.nist.javax.sip.ResponseEventExt;
-import gov.nist.javax.sip.SipListenerExt;
-import gov.nist.javax.sip.Utils;
-import gov.nist.javax.sip.message.SIPRequest;
-import gov.nist.javax.sip.message.SIPResponse;
-import gov.nist.javax.sip.stack.SIPClientTransaction;
-import gov.nist.javax.sip.stack.SIPServerTransaction;
-import gov.nist.javax.sip.stack.SIPTransaction;
+package org.mobicents.slee.resource.sip11;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,8 +32,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean
 
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
@@ -96,10 +86,6 @@ import javax.slee.resource.ReceivableService;
 import javax.slee.resource.ResourceAdaptorContext;
 import javax.slee.resource.UnrecognizedActivityHandleException;
 
-import net.java.slee.resource.sip.CancelRequestEvent;
-import net.java.slee.resource.sip.DialogForkedEvent;
-import net.java.slee.resource.sip.DialogTimeoutEvent;
-
 import org.mobicents.ha.javax.sip.ClusteredSipStack;
 import org.mobicents.ha.javax.sip.LoadBalancerElector;
 import org.mobicents.ha.javax.sip.cache.SipResourceAdaptorMobicentsSipCache;
@@ -118,7 +104,21 @@ import org.mobicents.slee.resource.sip11.wrappers.ServerTransactionWrapperAppDat
 import org.mobicents.slee.resource.sip11.wrappers.TimeoutEventWrapper;
 import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapper;
 import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapperAppData;
-import org.mobicents.slee.resource.sip11.wrappers.Wrapper;
+import org.mobicents.slee.resource.sip11.wrappers.Wrapper
+
+
+import gov.nist.javax.sip.ResponseEventExt;
+import gov.nist.javax.sip.SipListenerExt;
+import gov.nist.javax.sip.Utils;
+import gov.nist.javax.sip.message.SIPRequest;
+import gov.nist.javax.sip.message.SIPResponse;
+import gov.nist.javax.sip.stack.SIPClientTransaction;
+import gov.nist.javax.sip.stack.SIPServerTransaction;
+import gov.nist.javax.sip.stack.SIPTransaction
+
+import net.java.slee.resource.sip.CancelRequestEvent;
+import net.java.slee.resource.sip.DialogForkedEvent;
+import net.java.slee.resource.sip.DialogTimeoutEvent;
 
 public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceAdaptor<SipActivityHandle, String> {
 
@@ -213,6 +213,8 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 */
 	private Marshaler marshaler = new SipMarshaler();
 
+	private AtomicBoolean isInactive=new AtomicBoolean(false);
+	
 	/**
 	 * for all events we are interested in knowing when the event failed to be processed
 	 */
@@ -1369,7 +1371,9 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 * @see javax.slee.resource.ResourceAdaptor#raInactive()
 	 */
 	public void raInactive() {
-		
+	    if(!isInactive.compareAndSet(false, true))
+	        return;
+	    
 		this.provider.removeSipListener(this);
 		
 		ListeningPoint[] listeningPoints = this.provider.getListeningPoints();
@@ -1583,7 +1587,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 * (non-Javadoc)
 	 * @see javax.slee.resource.ResourceAdaptor#raUnconfigure()
 	 */
-	public void raUnconfigure() {		
+	public void raUnconfigure() {
 		this.port = -1;
 		this.stackAddress = null;
 		this.transports.clear();

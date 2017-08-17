@@ -206,6 +206,8 @@ public abstract class SimpleSip11B2BTestSbb implements javax.slee.Sbb {
 		}
 		// Copies the request, setting the appropriate headers for the dialog.
 		Request outgoingRequest = out.createRequest(incomingRequest);
+		outgoingRequest.setRequestURI(out.getRemoteParty().getURI());
+		
 		// Send the request on the dialog activity
 		final ClientTransaction ct = out.sendRequest(outgoingRequest);
 		// Record an association with the original server transaction,

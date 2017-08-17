@@ -150,25 +150,25 @@ public class ClusteredSipActivityManagement implements SipActivityManagement {
 	 */
 	public Wrapper remove(SipActivityHandle handle) {
 		Wrapper activity = nonReplicatedActivityManagement.remove(handle);
-		if (handle.getClass() == DialogWithoutIdActivityHandle.TYPE) {			
-			// remove remote tag from Ra's replicated data
-			Transaction tx = null;
-			try {
-				tx = sleeTransactionManager.getTransaction();
-				if (tx != null) {
-					sleeTransactionManager.suspend();
-				}
-			} catch (SystemException e) {
-				// ignore
-			}
-			replicatedData.remove(handle);
-			if (tx != null) {
-				try {
-					sleeTransactionManager.resume(tx);
-				} catch (Throwable e) {
-					// ignore
-				}
-			}			
+		if (handle.getClass() == DialogWithoutIdActivityHandle.TYPE) {		
+		 // remove remote tag from Ra's replicated data
+            Transaction tx = null;
+            try {
+                tx = sleeTransactionManager.getTransaction();
+                if (tx != null) {
+                    sleeTransactionManager.suspend();
+                }
+            } catch (SystemException e) {
+                // ignore
+            }
+            replicatedData.remove(handle);
+            if (tx != null) {
+                try {
+                    sleeTransactionManager.resume(tx);
+                } catch (Throwable e) {
+                    // ignore
+                }
+            }
 		}
 		return activity;
 	}
