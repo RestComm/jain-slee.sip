@@ -1,12 +1,4 @@
-= User Guide to {this-platform} {this-application} {this-ra} RA {project-version}
-:doctype: book
-:sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
-:toclevels: 3
-:sectnumlevels: 4
+= Restcomm JAIN SLEE SIP Resource Adaptor User Guide
 
 :leveloffset: 1
 
@@ -19,6 +11,8 @@ include::Book_Info.adoc[]
 include::Common_Content/Preface.adoc[]
 
 :leveloffset: 0
+
+<<<
 
 :leveloffset: 1
 

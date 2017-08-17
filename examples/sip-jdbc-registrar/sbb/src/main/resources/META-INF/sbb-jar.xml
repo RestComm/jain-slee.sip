@@ -27,7 +27,7 @@
 			<event-name>SimpleJdbcTaskResultEvent</event-name>
 			<event-type-ref>
 				<event-type-name>SimpleJdbcTaskResultEvent</event-type-name>
-				<event-type-vendor>org.mobicents</event-type-vendor>
+				<event-type-vendor>org.restcomm</event-type-vendor>
 				<event-type-version>1.0</event-type-version>
 			</event-type-ref>
 		</event>
@@ -38,7 +38,7 @@
 			<event-name>JdbcTaskExecutionThrowableEvent</event-name>
 			<event-type-ref>
 				<event-type-name>JdbcTaskExecutionThrowableEvent</event-type-name>
-				<event-type-vendor>org.mobicents</event-type-vendor>
+				<event-type-vendor>org.restcomm</event-type-vendor>
 				<event-type-version>1.0</event-type-version>
 			</event-type-ref>
 		</event>
@@ -49,7 +49,7 @@
 					JDBCResourceAdaptorType
 				</resource-adaptor-type-name>
 				<resource-adaptor-type-vendor>
-					org.mobicents
+					org.restcomm
 				</resource-adaptor-type-vendor>
 				<resource-adaptor-type-version>
 					1.0

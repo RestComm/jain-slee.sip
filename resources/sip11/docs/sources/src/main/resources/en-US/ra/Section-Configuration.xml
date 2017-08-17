@@ -64,6 +64,12 @@
           <entry>java.lang.Boolean</entry>
           <entry/>
         </row>
+        <row>
+          <entry>org.mobicents. slee.resource.sip11.SIPRA_PROPERTIES_LOCATION</entry>
+          <entry>Full path to a file containing SIP stack configuration. If not specified - SIP RA will search for sipra.properties in the classpath. Default location is in the sip11-ra jar file (package org.mobicents.slee.resource.sip11 sipra.properties).</entry>
+          <entry>java.lang.String</entry>
+          <entry/>
+        </row>
       </tbody>
     </tgroup>
   </table>

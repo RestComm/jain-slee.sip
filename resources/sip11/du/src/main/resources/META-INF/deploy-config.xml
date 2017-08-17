@@ -4,6 +4,7 @@
 		resource-adaptor-id="ResourceAdaptorID[name=JainSipResourceAdaptor,vendor=net.java.slee.sip,version=1.2]"
 		entity-name="SipRA">
 		<properties>
+			<property name="javax.sip.IP_ADDRESS" type="java.lang.String" value="127.0.0.1" />
 			<property name="javax.sip.PORT" type="java.lang.Integer" value="5060" />
 			<property name="javax.sip.TRANSPORT" type="java.lang.String" value="udp" />
 
@@ -18,6 +19,13 @@
 			<!--
 			<property name="org.mobicents.ha.javax.sip.CACHE_CLASS_NAME"
 				type="java.lang.String" value="org.mobicents.ha.javax.sip.cache.NoCache" />
+			-->
+
+			<!-- Absolute path to a file containing SIP stack configuration properties. This
+			     is optional property. If not set, SIP RA will search for sipra.properties in
+			     the class path.
+				<property name="org.mobicents.slee.resource.sip11.SIPRA_PROPERTIES_LOCATION"
+				type="java.lang.String" value="/opt/restcomm/jboss-5.1.0.GA/server.all.data/sipra.properties" />
 			-->
 		</properties>
 		<ra-link name="SipRA" />

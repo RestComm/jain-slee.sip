@@ -37,7 +37,7 @@ import javax.slee.transaction.SleeTransaction;
 
 import org.mobicents.slee.example.sjr.data.DataSourceParentSbbLocalInterface;
 import org.mobicents.slee.example.sjr.data.RegistrationBinding;
-import org.mobicents.slee.resource.jdbc.task.JdbcTaskContext;
+import org.restcomm.slee.resource.jdbc.task.JdbcTaskContext;
 
 /**
  * 

@@ -37,7 +37,9 @@ public class SipResourceAdaptorMobicentsSipCache extends MobicentsSipCache {
 	 */
 	public SipResourceAdaptorMobicentsSipCache() {
 		super();
-		cluster = SleeContainer.lookupFromJndi().getCluster();
+		if (SleeContainer.lookupFromJndi() != null) {
+			cluster = SleeContainer.lookupFromJndi().getCluster();
+		}
 	}
 	
 	@Override

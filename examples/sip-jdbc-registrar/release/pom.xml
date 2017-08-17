@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>restcomm-slee-example-sip-jdbc-registrar</artifactId>
 		<groupId>org.mobicents.examples</groupId>
-		<version>2.8.0-SNAPSHOT</version>
+		<version>7.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>restcomm-slee-example-sip-jdbc-registrar-release</artifactId>
@@ -41,7 +41,6 @@
                     				<copy overwrite="true" file="${basedir}/build.xml" todir="${release.dir}/examples/sip-jdbc-registrar">
                     					<filterset>
     										<filter token="JBOSS.PATH" value="${jboss.path}" />
-                      						<filter token="JBOSS.CONFIG" value="${node}" />
     									</filterset>
     								</copy>
 									</tasks>

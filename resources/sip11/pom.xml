@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.mobicents.servers.jainslee.sip</groupId>
         <artifactId>restcomm-slee-sip</artifactId>
-        <version>2.8.0-SNAPSHOT</version>
+        <version>7.0.0-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
 	
@@ -41,9 +41,16 @@
                 <artifactId>restcomm-jain-sip-ext</artifactId>
                 <version>${restcomm.jain.sip.ext.version}</version>
             </dependency>
+            <!--
             <dependency>
                 <groupId>org.mobicents.ha.javax.sip</groupId>
                 <artifactId>restcomm-jain-sip-jboss5</artifactId>
+                <version>${restcomm.jain.sip.ha.version}</version>
+            </dependency>
+            -->
+            <dependency>
+                <groupId>org.mobicents.ha.javax.sip</groupId>
+                <artifactId>restcomm-jain-sip-wildfly10</artifactId>
                 <version>${restcomm.jain.sip.ha.version}</version>
             </dependency>
             <dependency>
@@ -61,6 +68,20 @@
                 <artifactId>spi</artifactId>
                 <version>${restcomm.jain.slee.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>org.restcomm.cluster</groupId>
+                <artifactId>cache</artifactId>
+                <version>${restcomm.cluster.version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.restcomm.cluster</groupId>
+                <artifactId>core</artifactId>
+                <version>${restcomm.cluster.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.mobicents.tools</groupId>
                 <artifactId>sip-balancer-jar</artifactId>
