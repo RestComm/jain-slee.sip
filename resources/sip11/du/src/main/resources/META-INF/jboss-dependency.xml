@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dependency xmlns="urn:jboss:dependency:1.0">
+     <item whenRequired="Real" dependentState="Installed" attribute="inet-address" required="true">jboss.as:interface=public</item>
+</dependency>

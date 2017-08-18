@@ -34,6 +34,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean
 
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
@@ -242,13 +244,13 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	private String getJBossAddress() {
 		String address = null;
 		//address = System.getProperty("jboss.bind.address");
-
 		Object inetAddress = null;
 		try {
 			inetAddress = ManagementFactory.getPlatformMBeanServer()
-					.getAttribute(new ObjectName("jboss.as:interface=public"), "inet-address");
+					.getAttribute(new ObjectName("jboss.as:interface=public"), "inet-address");			
 		} catch (Exception e) {
 		}
+
 		if (inetAddress != null) {
 			address = inetAddress.toString();
 		}
@@ -1611,10 +1613,14 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			if (stackAddress.equals("")) {
 				stackAddress = this.getJBossAddress();
 			}
-			// try to open socket
-			InetSocketAddress sockAddress = new InetSocketAddress(stackAddress,
+			
+			if(stackAddress!=null) {
+			    // try to open socket
+			    InetSocketAddress sockAddress = new InetSocketAddress(stackAddress,
 					port);
-			new DatagramSocket(sockAddress).close();
+			    new DatagramSocket(sockAddress).close();
+			}
+			
 			// check transports			
 			String transports = (String) properties.getProperty(TRANSPORTS_BIND).getValue();
 			String[] transportsArray = transports.split(",");
