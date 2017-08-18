@@ -215,8 +215,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 */
 	private Marshaler marshaler = new SipMarshaler();
 
-	private AtomicBoolean isInactive=new AtomicBoolean(false);
-	
 	/**
 	 * for all events we are interested in knowing when the event failed to be processed
 	 */
@@ -1372,9 +1370,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 * (non-Javadoc)
 	 * @see javax.slee.resource.ResourceAdaptor#raInactive()
 	 */
-	public void raInactive() {
-	    if(!isInactive.compareAndSet(false, true))
-	        return;
+	public synchronized void raInactive() {
 	    
 		this.provider.removeSipListener(this);
 		
@@ -1402,7 +1398,11 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		}
 
 		this.providerWrapper.raInactive();
+		System.out.println("calling sipStack.stop() on " + sipStack.getClass().getSimpleName());
+		this.sipStack.stop();
 		
+		System.out.println("DONE");
+        
 		if (tracer.isFineEnabled()) {
 			tracer.fine("Sip Resource Adaptor entity inactive.");
 		}		
@@ -1709,7 +1709,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 * (non-Javadoc)
 	 * @see javax.slee.resource.ResourceAdaptor#unsetResourceAdaptorContext()
 	 */
-	public void unsetResourceAdaptorContext() {
+	public synchronized void unsetResourceAdaptorContext() {
 		this.raContext = null;
 		this.sleeEndpoint = null;
 		this.eventLookupFacility = null;
