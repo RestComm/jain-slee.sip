@@ -1,63 +1,146 @@
-<?xml version="1.0" encoding="utf-8"?>
-<project name="Release_build" default="deploy-all">
+<?xml version="1.0" encoding="UTF-8"?>
 
-	<property name="home" value="${ant.file.Release_build}/../" />
+<project name="DUManagement" default="deploy">
 
-	<property name="jboss.home" value="${home}/@JBOSS.PATH@/" />
-	<property name="jboss.config" value="@JBOSS.CONFIG@" />
+	<!-- SYSTEM RELATED -->
+	<property environment="system" />
+	<property name="jboss.home" value="${system.JBOSS_HOME}" />
+	<property name="jboss.deploy" value="${jboss.home}/standalone/deployments" />
+
+	<!-- CORE RELATED -->
+
+	<path id="project.classpath">
+		<fileset dir="${jboss.home}/modules/system/layers/base/org/telestax/slee/container/lib/main">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<property name="project.classpath" refid="project.classpath" />
+	
+	<!-- Server Connectivity Properties -->
 	<property name="jnpHost" value="127.0.0.1" />
 	<property name="jnpPort" value="1099" />
 
-	<target name="deploy-all-jmx">
-		<ant antfile="${home}../../resources/sip11/build.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}../../enablers/sip-publication-client/du-management.xml" target="deploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
+	<condition property="file_url" value="file:/">
+		<os family="windows" />
+	</condition>
+	<!-- Property already set on windows platform -->
+	<property name="file_url" value="file://" />
+
+	<pathconvert targetos="unix" property="jboss.home.standard">
+		<path description="To use te same stile for every url file" path="${jboss.home}" />
+	</pathconvert>
+	<pathconvert targetos="unix" property="mobicents.home.standard">
+		<path description="To use te same stile for every url file" path="${mobicents.home}" />
+	</pathconvert>
+
+	<target name="create-deploy-urls">
+		<path id="url.to.deploy">
+			<pathelement location="${du.filename}" />
+		</path>
+		<property name="url.to.deploy" refid="url.to.deploy" />
 	</target>
 
-	<target name="undeploy-all-jmx">
-		<ant antfile="${home}../../enablers/sip-publication-client/du-management.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
-		<ant antfile="${home}../../resources/sip11/build.xml" target="undeploy-jmx" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-			<property name="jnpHost" value="${jnpHost}" />
-			<property name="jnpPort" value="${jnpPort}" />
-		</ant>
+	<target name="install-DU" depends="create-deploy-urls">
+		<echo>Installing ${url.to.deploy}.</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<install url="${file_url}${url.to.deploy}" />
+		</slee-management>
 	</target>
 
-	<target name="deploy-all">
-		<ant antfile="${home}../../resources/sip11/build.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}../../enablers/sip-publication-client/du-management.xml" target="deploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
+		<target name="activate-raentity-with-properties" depends="create-deploy-urls" if="ra.entity.properties.filename">
+		<path id="ra.entity.properties.path">
+			<pathelement location="${ra.entity.properties.filename}" />
+		</path>
+		<!-- Lets leave pathconvert - it cant hurt, windows swalows it, and besides we still need to define property to add URI identifier "file:/"-->
+		<!-- However net.java.URI class requires / not \ .... -->
+		<pathconvert property="ra.props" targetos="unix" refid="ra.entity.properties.path"/>
+		<property name="ra.entity.properties.url" value="${file_url}${ra.props}" />
+		<echo>Activating ${ra.entity} with properties: file=${ra.entity.properties.filename} fileURL=${ra.entity.properties.url}</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<createraentity componentid="${ra.id}" entityname="${ra.entity}" properties="${ra.entity.properties.url}" />
+			<activateraentity entityname="${ra.entity}" />
+		</slee-management>
+
 	</target>
 
-	<target name="undeploy-all">
-		<ant antfile="${home}../../enablers/sip-publication-client/du-management.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
-		<ant antfile="${home}../../resources/sip11/build.xml" target="undeploy" inheritAll="false">
-			<property name="jboss.home" value="${jboss.home}" />
-			<property name="node" value="${jboss.config}" />
-		</ant>
+	<target name="activate-raentity-without-properties" depends="create-deploy-urls" unless="ra.entity.properties.filename">
+		<echo>Activating ${ra.entity} without properties file.</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<createraentity componentid="${ra.id}" entityname="${ra.entity}" />
+			<activateraentity entityname="${ra.entity}" />
+		</slee-management>
+	</target>
+
+	<target name="activate-raentity" depends="activate-raentity-without-properties,activate-raentity-with-properties" />
+	
+	<target name="bind-ralink">
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<bindralinkname entityname="${ra.entity}" linkname="${ra.link}" />
+		</slee-management>
+	</target>
+	
+	<target name="unbind-ralink">
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<unbindralinkname linkname="${ra.link}" />
+		</slee-management>
+	</target>
+		 	
+	<target name="uninstall-DU" depends="create-deploy-urls">
+		<echo>Uninstalling ${url.to.deploy}.</echo>
+		<slee-management jnpport="${jnpPort}" host="${jnpHost}">
+			<uninstall url="${file_url}${url.to.deploy}" />
+		</slee-management>
+	</target>
+
+	<target name="deactivate-raentity" depends="create-deploy-urls">
+		<echo>Deactivating ${ra.entity}.</echo>
+		<slee-management jnpport="${jnpPort}"  host="${jnpHost}">			
+			<deactivateraentity entityname="${ra.entity}" />
+			<removeraentity entityname="${ra.entity}" />
+		</slee-management>
+	</target>
+		
+	<target name="activate-service">		
+		<slee-management host="${jnpHost}" jnpport="${jnpPort}">
+			<activateservice componentid="${service.id}"/>
+		</slee-management>
+    </target>
+	
+	<target name="deactivate-service">		
+		<slee-management host="${jnpHost}" jnpport="${jnpPort}">
+			<deactivateservice componentid="${service.id}"/>
+		</slee-management>
+	</target>
+	
+	<!-- AUTO GENERATED BY MAVEN DU PLUGIN -->
+	
+
+	<property name="du.filename" value="sip-publication-client-DU-7.1.0.22.jar" />
+
+	<target name="deploy-jmx">
+
+		<antcall target="install-DU" />
+
+	</target>
+
+	<target name="undeploy-jmx">
+
+		<!-- UNINSTALL DU -->
+		<antcall target="uninstall-DU" />
+	
+	</target>
+
+	<target name="deploy">
+		<copy overwrite="true" 
+
+			file="${du.filename}"
+
+			todir="${jboss.deploy}" />
+	</target>
+
+	<target name="undeploy">
+		<delete file="${jboss.deploy}/${du.filename}" />
 	</target>
 
 </project>
