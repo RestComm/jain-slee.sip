@@ -2,9 +2,8 @@
 <project name="Release_build" default="deploy-all">
 
 	<property name="home" value="${ant.file.Release_build}/../" />
-
-	<property name="jboss.home" value="${home}/../../wildfly-10.1.0.Final/" />
-
+	<property name="jboss.home" value="${home}/@JBOSS.PATH@/" />
+		
 	<target name="deploy-all">
 		<ant antfile="${home}../../examples/sip-jdbc-registrar/build.xml" target="deploy-all" inheritAll="false">
 			<property name="jboss.home" value="${jboss.home}" />
