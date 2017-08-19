@@ -20,6 +20,7 @@
 		<restcomm.jain.sip.ext.version>1.3.26</restcomm.jain.sip.ext.version>
 		<restcomm.jain.sip.ha.version>1.6.7</restcomm.jain.sip.ha.version>
 		<restcomm.loadbalancer.version>8.1.147</restcomm.loadbalancer.version>
+		<maven.du.plugin.wildfly.version>4.0.2</maven.du.plugin.wildfly.version>
 	</properties>
 	
 	<modules>

@@ -22,6 +22,7 @@
 			<plugin>
 				<groupId>org.mobicents.tools</groupId>
 				<artifactId>maven-du-plugin</artifactId>
+				<version>${maven.du.plugin.wildfly.version}</version>
 				<executions>
 					<execution>
 						<goals>

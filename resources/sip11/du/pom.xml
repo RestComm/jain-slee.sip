@@ -39,7 +39,7 @@
             <plugin>
                 <groupId>org.mobicents.tools</groupId>
                 <artifactId>maven-du-plugin</artifactId>
-                <version>4.0.2</version>
+                <version>${maven.du.plugin.wildfly.version}</version>
                 <executions>
                     <execution>
                         <goals>
