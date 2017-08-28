@@ -7,7 +7,7 @@
 		<version>7.0.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>restcomm-slee-example-sip-jdbc-registrar-DU</artifactId>
+	<artifactId>restcomm-sip-jdbc-registrar-DU</artifactId>
 
 	<dependencies>
 		<dependency>
