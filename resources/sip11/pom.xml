@@ -87,6 +87,11 @@
                 <artifactId>sip-balancer-jar</artifactId>
                 <version>${restcomm.loadbalancer.version}</version>			
             </dependency>
+            <dependency>
+                <groupId>org.mobicents.tools</groupId>
+                <artifactId>heartbeat-api</artifactId>
+                <version>${restcomm.loadbalancer.version}</version>			
+            </dependency>
         </dependencies>
     </dependencyManagement>
 	

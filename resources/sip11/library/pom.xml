@@ -1,74 +1,75 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>restcomm-slee-ra-sip11</artifactId>
-        <groupId>org.mobicents.resources</groupId>
-        <version>7.0.0-SNAPSHOT</version>
-    </parent>
+	<parent>
+		<artifactId>restcomm-slee-ra-sip11</artifactId>
+		<groupId>org.mobicents.resources</groupId>
+		<version>7.0.0-SNAPSHOT</version>
+	</parent>
 
-    <artifactId>sip11-library</artifactId>
-    <name>Restcomm :: Resources :: ${project.artifactId}</name>
+	<artifactId>sip11-library</artifactId>
+	<name>Restcomm :: Resources :: ${project.artifactId}</name>
 
-    <dependencies>
-        <dependency>
-            <groupId>${project.parent.groupId}</groupId>
-            <artifactId>sip11-jain-sip-ha</artifactId>
-            <version>${project.parent.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.sip</groupId>
-            <artifactId>jain-sip-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.sip</groupId>
-            <artifactId>jain-sip-ri</artifactId>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>org.mobicents.ha.javax.sip</groupId>
-            <artifactId>restcomm-jain-sip-jboss5</artifactId>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>org.mobicents.ha.javax.sip</groupId>
-            <artifactId>restcomm-jain-sip-wildfly10</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mobicents.ha.javax.sip</groupId>
-            <artifactId>restcomm-jain-sip-ha-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mobicents.javax.sip</groupId>
-            <artifactId>restcomm-jain-sip-ext</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mobicents.tools</groupId>
-            <artifactId>sip-balancer-jar</artifactId>
-        </dependency>
-    </dependencies>
+	<dependencies>
+		<dependency>
+			<groupId>${project.parent.groupId}</groupId>
+			<artifactId>sip11-jain-sip-ha</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.sip</groupId>
+			<artifactId>jain-sip-ri</artifactId>
+		</dependency>
+		<!-- <dependency> <groupId>org.mobicents.ha.javax.sip</groupId> <artifactId>restcomm-jain-sip-jboss5</artifactId> 
+			</dependency> -->
+		<dependency>
+			<groupId>org.mobicents.ha.javax.sip</groupId>
+			<artifactId>restcomm-jain-sip-wildfly10</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.ha.javax.sip</groupId>
+			<artifactId>restcomm-jain-sip-ha-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.javax.sip</groupId>
+			<artifactId>restcomm-jain-sip-ext</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.tools</groupId>
+			<artifactId>sip-balancer-jar</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.mobicents.tools</groupId>
+			<artifactId>heartbeat-api</artifactId>
+		</dependency>
+	</dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.mobicents.tools</groupId>
-                <artifactId>maven-library-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                            <goal>generate-descriptor</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <library-name>jain-sip</library-name>
-                    <library-vendor>javax.sip</library-vendor>
-                    <library-version>1.2</library-version>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.mobicents.tools</groupId>
+				<artifactId>maven-library-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>copy-dependencies</goal>
+							<goal>generate-descriptor</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<library-name>jain-sip</library-name>
+					<library-vendor>javax.sip</library-vendor>
+					<library-version>1.2</library-version>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>
