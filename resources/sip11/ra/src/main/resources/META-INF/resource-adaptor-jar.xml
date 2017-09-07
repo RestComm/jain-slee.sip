@@ -55,7 +55,7 @@
         	<description>the list of supported transports, separated with ","</description>
             <config-property-name>javax.sip.TRANSPORT</config-property-name>
             <config-property-type>java.lang.String</config-property-type>
-            <config-property-value>UDP</config-property-value>
+            <config-property-value>TCP,UDP</config-property-value>
         </config-property>
         
         <config-property>
