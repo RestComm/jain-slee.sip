@@ -22,8 +22,6 @@
    ]]>
 	</send>
 	
-	<pause milliseconds="250"/>
-	
 	<send>
    <![CDATA[
 

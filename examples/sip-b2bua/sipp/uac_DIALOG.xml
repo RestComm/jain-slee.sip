@@ -53,7 +53,7 @@
 
 	<pause milliseconds="55000"/>
 
-	<send>
+	<send retrans="2000">
    <![CDATA[
 
      BYE [next_url] SIP/2.0
