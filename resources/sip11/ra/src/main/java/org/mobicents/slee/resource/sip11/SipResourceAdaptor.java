@@ -18,7 +18,7 @@
  */
 
 package org.mobicents.slee.resource.sip11;
-
+ 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,11 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.management.MalformedObjectNameException;
-import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 import javax.sip.ClientTransaction;
 import javax.sip.Dialog;
@@ -108,7 +104,6 @@ import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapper;
 import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapperAppData;
 import org.mobicents.slee.resource.sip11.wrappers.Wrapper;
 
-
 import gov.nist.javax.sip.ResponseEventExt;
 import gov.nist.javax.sip.SipListenerExt;
 import gov.nist.javax.sip.Utils;
@@ -117,12 +112,13 @@ import gov.nist.javax.sip.message.SIPResponse;
 import gov.nist.javax.sip.stack.SIPClientTransaction;
 import gov.nist.javax.sip.stack.SIPServerTransaction;
 import gov.nist.javax.sip.stack.SIPTransaction;
-
 import net.java.slee.resource.sip.CancelRequestEvent;
 import net.java.slee.resource.sip.DialogForkedEvent;
 import net.java.slee.resource.sip.DialogTimeoutEvent;
 
-public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceAdaptor<SipActivityHandle, String> {
+public class SipResourceAdaptor implements
+		SipListenerExt,
+		FaultTolerantResourceAdaptor<SipActivityHandle, String> {
 
 	// Config Properties Names -------------------------------------------
 
@@ -194,7 +190,8 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	private ResourceAdaptorContext raContext;
 	private SleeEndpoint sleeEndpoint;
 	private EventLookupFacility eventLookupFacility;
-	
+	private SipResourceAdaptorStatisticsUsageParameters defaultUsageParameters;
+
 	/**
 	 * 
 	 */
@@ -274,6 +271,15 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		
 		if (tracer.isInfoEnabled()) {
 			tracer.info("Received Request:\n"+req.getRequest());
+		}
+
+		// Restcomm Statistics
+		final String method = req.getRequest().getMethod();
+		if (Request.INVITE.equalsIgnoreCase(method)) {
+			this.defaultUsageParameters.incrementCalls(1);
+		}
+		if (Request.MESSAGE.equalsIgnoreCase(method)) {
+			this.defaultUsageParameters.incrementMessages(1);
 		}
 
 		// get dialog wrapper
@@ -1256,7 +1262,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 				activityManagement = new ClusteredSipActivityManagement(sipStack,ftRaContext.getReplicateData(true),raContext.getSleeTransactionManager(),this); 
 			}
 
-
 			if (tracer.isFineEnabled()) {
 				tracer
 						.fine("---> START "
@@ -1371,7 +1376,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 * @see javax.slee.resource.ResourceAdaptor#raInactive()
 	 */
 	public synchronized void raInactive() {
-	    
+
 		this.provider.removeSipListener(this);
 		
 		ListeningPoint[] listeningPoints = this.provider.getListeningPoints();
@@ -1700,6 +1705,13 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		this.sleeEndpoint = (SleeEndpoint) raContext.getSleeEndpoint();
 		this.eventLookupFacility = raContext.getEventLookupFacility();
 		this.providerWrapper = new SleeSipProviderImpl(this);
+
+		try {
+			this.defaultUsageParameters =
+					(SipResourceAdaptorStatisticsUsageParameters) raContext.getDefaultUsageParameterSet();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/*
