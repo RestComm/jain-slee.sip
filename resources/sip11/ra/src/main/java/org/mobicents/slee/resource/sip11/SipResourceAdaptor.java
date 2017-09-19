@@ -187,7 +187,8 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	private ResourceAdaptorContext raContext;
 	private SleeEndpoint sleeEndpoint;
 	private EventLookupFacility eventLookupFacility;
-	
+	private SipResourceAdaptorStatisticsUsageParameters defaultUsageParameters;
+
 	/**
 	 * 
 	 */
@@ -251,7 +252,16 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		if (tracer.isInfoEnabled()) {
 			tracer.info("Received Request:\n"+req.getRequest());
 		}
-		
+
+		// Restcomm Statistics
+		final String method = req.getRequest().getMethod();
+		if (Request.INVITE.equalsIgnoreCase(method)) {
+			this.defaultUsageParameters.incrementCalls(1);
+		}
+		if (Request.MESSAGE.equalsIgnoreCase(method)) {
+			this.defaultUsageParameters.incrementMessages(1);
+		}
+
 		// get dialog wrapper
 		final Dialog d = req.getDialog();
 		final DialogWrapper dw = getDialogWrapper(d);
@@ -1345,8 +1355,8 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 * (non-Javadoc)
 	 * @see javax.slee.resource.ResourceAdaptor#raInactive()
 	 */
-	public void raInactive() {
-		
+	public synchronized void raInactive() {
+
 		this.provider.removeSipListener(this);
 		
 		ListeningPoint[] listeningPoints = this.provider.getListeningPoints();
@@ -1670,13 +1680,20 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		this.sleeEndpoint = (SleeEndpoint) raContext.getSleeEndpoint();
 		this.eventLookupFacility = raContext.getEventLookupFacility();
 		this.providerWrapper = new SleeSipProviderImpl(this);
+
+		try {
+			this.defaultUsageParameters =
+					(SipResourceAdaptorStatisticsUsageParameters) raContext.getDefaultUsageParameterSet();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/*
 	 * (non-Javadoc)
 	 * @see javax.slee.resource.ResourceAdaptor#unsetResourceAdaptorContext()
 	 */
-	public void unsetResourceAdaptorContext() {
+	public synchronized void unsetResourceAdaptorContext() {
 		this.raContext = null;
 		this.sleeEndpoint = null;
 		this.eventLookupFacility = null;
