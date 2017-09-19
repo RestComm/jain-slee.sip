@@ -25,6 +25,5 @@ public interface SipResourceAdaptorStatisticsUsageParameters {
 
     public void incrementCalls(long value);
     public void incrementMessages(long value);
-    public void incrementSeconds(long value);
 
 }
