@@ -138,6 +138,7 @@ public class SipResourceAdaptor implements
 
 	public static final String SIPRA_PROPERTIES_LOCATION = "org.mobicents.slee.resource.sip11.SIPRA_PROPERTIES_LOCATION";
 
+	public static final String SIP_TRACE_LEVEL = "gov.nist.javax.sip.TRACE_LEVEL";
 	// Config Properties Values -------------------------------------------
 
 	private int port;
@@ -148,6 +149,7 @@ public class SipResourceAdaptor implements
 	private String balancers;
 	private String loadBalancerElector;
 	private String cacheClassName;
+	private String sipTraceLevel;
 	private String sipRaPropertiesLocation;
 	/**
 	 * default is true;
@@ -1367,6 +1369,9 @@ public class SipResourceAdaptor implements
 						SipResourceAdaptorMobicentsSipCache.class.getName());
 			}
 		}
+		if (sipTraceLevel != null) {
+            properties.setProperty(SIP_TRACE_LEVEL, sipTraceLevel);
+        }
 		return properties;
 	}
 
@@ -1583,6 +1588,11 @@ public class SipResourceAdaptor implements
 			this.sipRaPropertiesLocation = (String) p.getValue();
 		}
 
+		p = properties.getProperty(SIP_TRACE_LEVEL);
+        if (p != null && p.getValue() != null) {
+            this.sipTraceLevel = (String) p.getValue();
+        }
+        
 		tracer.info("RA entity named "+raContext.getEntityName()+" bound to port " + this.port);
 		
 	}
