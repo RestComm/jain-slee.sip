@@ -26,6 +26,7 @@
 				<property name="org.mobicents.slee.resource.sip11.SIPRA_PROPERTIES_LOCATION"
 				type="java.lang.String" value="/opt/restcomm/jboss-5.1.0.GA/server.all.data/sipra.properties" />
 			-->
+			<property name="gov.nist.javax.sip.TRACE_LEVEL" type="java.lang.String" value="ERROR"/>
 		</properties>
 		<ra-link name="SipRA" />
 	</ra-entity>
