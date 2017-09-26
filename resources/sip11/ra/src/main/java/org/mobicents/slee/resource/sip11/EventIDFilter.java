@@ -46,7 +46,7 @@ public class EventIDFilter {
 	 * @return true is event is to be filtered, false otherwise
 	 */
 	public boolean filterEvent(FireableEventType eventType) {		
-		return !eventID2serviceIDs.containsKey(eventType.getEventType());
+		return !(eventID2serviceIDs.containsKey(eventType.getEventType()) && !eventID2serviceIDs.get(eventType.getEventType()).isEmpty());
 	}
 
 	/**
