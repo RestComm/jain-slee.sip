@@ -41,6 +41,11 @@
             <groupId>org.mobicents.tools</groupId>
             <artifactId>sip-balancer-jar</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.mobicents.tools</groupId>
+            <artifactId>heartbeat-api</artifactId>
+            <version>${restcomm.loadbalancer.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
