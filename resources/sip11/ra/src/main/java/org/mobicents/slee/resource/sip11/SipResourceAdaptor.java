@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.BindException;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import javax.sip.Dialog;
 import javax.sip.DialogState;
 import javax.sip.DialogTerminatedEvent;
 import javax.sip.IOExceptionEvent;
+import javax.sip.InvalidArgumentException;
 import javax.sip.ListeningPoint;
 import javax.sip.ObjectInUseException;
 import javax.sip.RequestEvent;
@@ -49,6 +51,8 @@ import javax.sip.TimeoutEvent;
 import javax.sip.Transaction;
 import javax.sip.TransactionState;
 import javax.sip.TransactionTerminatedEvent;
+import javax.sip.TransportAlreadySupportedException;
+import javax.sip.TransportNotSupportedException;
 import javax.sip.address.AddressFactory;
 import javax.sip.address.URI;
 import javax.sip.header.CSeqHeader;
@@ -86,6 +90,7 @@ import javax.slee.resource.UnrecognizedActivityHandleException;
 
 import org.mobicents.ha.javax.sip.ClusteredSipStack;
 import org.mobicents.ha.javax.sip.LoadBalancerElector;
+import org.mobicents.ha.javax.sip.LoadBalancerHeartBeatingService;
 import org.mobicents.ha.javax.sip.cache.SipResourceAdaptorMobicentsSipCache;
 import org.mobicents.slee.container.resource.SleeEndpoint;
 import org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptor;
@@ -1528,8 +1533,51 @@ public class SipResourceAdaptor implements
 	 * @see javax.slee.resource.ResourceAdaptor#raConfigurationUpdate(javax.slee.resource.ConfigProperties)
 	 */
 	public void raConfigurationUpdate(ConfigProperties properties) {
-		raConfigure(properties);		
-	}
+        try {
+            Set<String> oldTransports = new HashSet<String>(this.transports);
+            raConfigure(properties);
+            addNewRemoveOldTransports(oldTransports, this.transports);
+        } catch (Throwable ex) {
+            String msg = "error while updating RA configuration";
+            tracer.severe(msg, ex);
+            throw new RuntimeException(msg,ex);
+        }
+    }
+    
+    private void addNewRemoveOldTransports(Set<String> oldTransports, Set<String> newTransports) throws ObjectInUseException, TransportAlreadySupportedException, TransportNotSupportedException, InvalidArgumentException {
+        for(String newTransport : newTransports) {
+            if(!oldTransports.contains(newTransport)) {
+                addListeningPoint(newTransport);
+            }
+        }
+        for(String oldTransport : oldTransports) {
+            if(!newTransports.contains(oldTransport)) {
+                removeListeningPoint(oldTransport);
+            }
+        }
+    }
+    
+    private void addListeningPoint(String transport) throws TransportNotSupportedException, InvalidArgumentException, ObjectInUseException, TransportAlreadySupportedException {
+        ListeningPoint lp = this.sipStack.createListeningPoint(
+                this.stackAddress, this.port, transport);
+        this.provider.addListeningPoint(lp);
+        LoadBalancerHeartBeatingService lbHeartbeatingService = this.sipStack.getLoadBalancerHeartBeatingService();
+        if(lbHeartbeatingService != null) {
+            lbHeartbeatingService.addSipConnector(lp); 
+        }
+    }
+    
+    private void removeListeningPoint(String transport) throws ObjectInUseException {
+        ListeningPoint lp = this.provider.getListeningPoint(transport);
+        if(lp != null) {
+            this.provider.removeListeningPoint(lp);
+            this.sipStack.deleteListeningPoint(lp);
+            LoadBalancerHeartBeatingService lbHeartbeatingService = this.sipStack.getLoadBalancerHeartBeatingService();
+            if(lbHeartbeatingService != null) {
+                lbHeartbeatingService.removeSipConnector(lp);
+            }
+        }
+    }
 	
 	/*
 	 * (non-Javadoc)
@@ -1630,7 +1678,11 @@ public class SipResourceAdaptor implements
 			    // try to open socket
 			    InetSocketAddress sockAddress = new InetSocketAddress(stackAddress,
 					port);
-			    new DatagramSocket(sockAddress).close();
+			    try {
+	                new DatagramSocket(sockAddress).close();
+			    } catch(BindException e) {
+			        // in case already bound
+			    }
 			}
 			
 			// check transports			

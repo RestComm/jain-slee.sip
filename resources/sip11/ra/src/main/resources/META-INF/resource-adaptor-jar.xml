@@ -19,7 +19,7 @@
        </resource-adaptor-type-ref>
     
         <resource-adaptor-classes>
-            <resource-adaptor-class>
+            <resource-adaptor-class supports-active-reconfiguration="True">
                 <resource-adaptor-class-name>
                     org.mobicents.slee.resource.sip11.SipResourceAdaptor
                 </resource-adaptor-class-name>
