@@ -24,7 +24,6 @@ import gov.nist.javax.sip.ResponseEventExt;
 import gov.nist.javax.sip.SipListenerExt;
 import gov.nist.javax.sip.Utils;
 import gov.nist.javax.sip.message.SIPRequest;
-import gov.nist.javax.sip.message.SIPResponse;
 import gov.nist.javax.sip.stack.SIPClientTransaction;
 import gov.nist.javax.sip.stack.SIPServerTransaction;
 import gov.nist.javax.sip.stack.SIPTransaction;
@@ -47,7 +46,6 @@ import javax.sip.Dialog;
 import javax.sip.DialogState;
 import javax.sip.DialogTerminatedEvent;
 import javax.sip.IOExceptionEvent;
-import javax.sip.InvalidArgumentException;
 import javax.sip.ListeningPoint;
 import javax.sip.ObjectInUseException;
 import javax.sip.RequestEvent;
@@ -59,8 +57,6 @@ import javax.sip.TimeoutEvent;
 import javax.sip.Transaction;
 import javax.sip.TransactionState;
 import javax.sip.TransactionTerminatedEvent;
-import javax.sip.TransportAlreadySupportedException;
-import javax.sip.TransportNotSupportedException;
 import javax.sip.address.AddressFactory;
 import javax.sip.address.URI;
 import javax.sip.header.CSeqHeader;
@@ -93,20 +89,16 @@ import javax.slee.resource.IllegalEventException;
 import javax.slee.resource.InvalidConfigurationException;
 import javax.slee.resource.Marshaler;
 import javax.slee.resource.ReceivableService;
+import javax.slee.resource.ResourceAdaptor;
 import javax.slee.resource.ResourceAdaptorContext;
+import javax.slee.resource.SleeEndpoint;
 import javax.slee.resource.UnrecognizedActivityHandleException;
 
 import net.java.slee.resource.sip.CancelRequestEvent;
 import net.java.slee.resource.sip.DialogForkedEvent;
 import net.java.slee.resource.sip.DialogTimeoutEvent;
 
-import org.mobicents.ha.javax.sip.ClusteredSipStack;
-import org.mobicents.ha.javax.sip.LoadBalancerElector;
-import org.mobicents.ha.javax.sip.LoadBalancerHeartBeatingService;
-import org.mobicents.ha.javax.sip.cache.SipResourceAdaptorMobicentsSipCache;
-import org.mobicents.slee.container.resource.SleeEndpoint;
-import org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptor;
-import org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptorContext;
+import org.mobicents.ext.javax.sip.SipStackImpl;
 import org.mobicents.slee.resource.sip11.wrappers.ACKDummyTransaction;
 import org.mobicents.slee.resource.sip11.wrappers.ClientDialogWrapper;
 import org.mobicents.slee.resource.sip11.wrappers.ClientTransactionWrapper;
@@ -121,7 +113,8 @@ import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapper;
 import org.mobicents.slee.resource.sip11.wrappers.TransactionWrapperAppData;
 import org.mobicents.slee.resource.sip11.wrappers.Wrapper;
 
-public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceAdaptor<SipActivityHandle, String> {
+public class SipResourceAdaptor implements
+		SipListenerExt, ResourceAdaptor {
 
 	// Config Properties Names -------------------------------------------
 
@@ -133,10 +126,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 
 	private static final String STACK_NAME_BIND = "javax.sip.STACK_NAME";
 
-	private static final String LOAD_BALANCER_HEART_BEAT_SERVICE_CLASS = "org.mobicents.ha.javax.sip.LoadBalancerHeartBeatingServiceClassName";
-	
-	private static final String BALANCERS = "org.mobicents.ha.javax.sip.BALANCERS";
-	
 	private static final String LOOSE_DIALOG_VALIDATION = "org.mobicents.javax.sip.LOOSE_DIALOG_VALIDATION";
 
 	public static final String SIPRA_PROPERTIES_LOCATION = "org.mobicents.slee.resource.sip11.SIPRA_PROPERTIES_LOCATION";
@@ -148,10 +137,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	private Set<String> transports = new HashSet<String>();
 	private String transportsProperty;
 	private String stackAddress;
-	private String sipBalancerHeartBeatServiceClassName;
-	private String balancers;
-	private String loadBalancerElector;
-	private String cacheClassName;
 	private String sipTraceLevel;
 	private String sipRaPropertiesLocation;
 	/**
@@ -205,7 +190,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	/**
 	 * 
 	 */
-	private ClusteredSipStack sipStack = null;
+	private SipStackImpl sipStack = null;
 
 	/**
 	 * 
@@ -236,7 +221,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		allowedTransports.add("tcp");
         allowedTransports.add("ws");
         allowedTransports.add("wss");
-
+        
         // this.stackAddress = "127.0.0.1";
 		// this.stackPrefix = "gov.nist";
 	}
@@ -366,12 +351,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	protected boolean endActivity(Wrapper activity) {
 		try {
 			activity.ending();
-			if (!inLocalMode() && activity.getActivityHandle().isReplicated()) {
-				sleeEndpoint.endReplicatedActivity(activity.getActivityHandle());
-			}
-			else {
-				sleeEndpoint.endActivity(activity.getActivityHandle());
-			}			
+			sleeEndpoint.endActivity(activity.getActivityHandle());
 			return true;
 		} catch (Exception e) {
 			tracer.severe(e.getMessage(),e);
@@ -384,12 +364,8 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			throws UnrecognizedActivityHandleException, IllegalEventException,
 			ActivityIsEndingException, NullPointerException, SLEEException,
 			FireEventException {
-		if (!inLocalMode() && handle.isReplicated()) {
-			sleeEndpoint.fireEventOnReplicatedActivity(handle, eventType, event, address, null, eventFlags);
-		} else {
-			sleeEndpoint.fireEvent(handle, eventType,
-					event, address, null, eventFlags);
-		}
+	    sleeEndpoint.fireEvent(handle, eventType,
+	            event, address, null, eventFlags);
 	}
 	
 	/**
@@ -406,26 +382,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
     	if (dwad != null) {
     		dw = dwad.getDialogWrapper(d, this);
     	}
-    	if (dw == null && !inLocalMode()) {
-			// may be a replicated dialog that locally has no wrapper yet
-    		DialogWithIdActivityHandle dialogWithIdActivityHandle = new DialogWithIdActivityHandle(d.getDialogId());
-			if (sleeEndpoint.replicatedActivityExists(dialogWithIdActivityHandle)) {
-				// if exists recreate wrapper
-				dw = new DialogWrapper(dialogWithIdActivityHandle,this);
-				dw.setWrappedDialog(d);
-			}
-			else {
-				// does not exists try without remote tag, may be the master client dialog, which handle has no remote tag
-				DialogWithoutIdActivityHandle dialogWithoutIdActivityHandle = new DialogWithoutIdActivityHandle(d.getCallId().getCallId(), d.getLocalTag());
-				if (!sleeEndpoint.replicatedActivityExists(dialogWithoutIdActivityHandle)) {
-					return null;
-				}									
-				// exists
-				ClientDialogWrapper cdw = new ClientDialogWrapper(dialogWithoutIdActivityHandle, this);
-				cdw.setWrappedDialog(d);				
-				dw = cdw;
-			}					
-		}
 		return dw;
 	}
 
@@ -588,17 +544,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		DialogWrapper dw = getDialogWrapper(d);
 		if (dw != null && dw.isClientDialog()) {			
 			final ClientDialogWrapper cdw = (ClientDialogWrapper) dw;			
-			if (cdw.getState() == DialogState.EARLY) {
-				if (!inLocalMode()) {					
-					// ensure the the relation handle -> remote tag is replicated, otherwise it's impossible to get the dialog from stack in another node
-					if (((ClusteredSipActivityManagement)activityManagement).replicateRemoteTag(dw.getActivityHandle(), d.getRemoteTag())) {
-						if (tracer.isInfoEnabled()) {
-							tracer.info("Replicating mapping of outgoing dialog handle "+dw.getActivityHandle()+" to remote tag "+d.getRemoteTag());
-						}
-					}
-				}
-			}
-			else if (cdw.getState() == DialogState.CONFIRMED) {
+			if (cdw.getState() == DialogState.CONFIRMED) {
 				if (!cdw.stopForking(true)) {
 					if (!cdw.isForkingWinner()) {
 						if (tracer.isInfoEnabled()) {
@@ -613,14 +559,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 					if (tracer.isInfoEnabled()) {
 						tracer.info("Original dialog "+dw.getDialogId()+" confirmed.");
 					}
-					if (!inLocalMode()) {					
-						// ensure the the relation handle -> remote tag is replicated, otherwise it's impossible to get the dialog from stack in another node
-						if (((ClusteredSipActivityManagement)activityManagement).replicateRemoteTag(dw.getActivityHandle(), d.getRemoteTag())) {
-							if (tracer.isInfoEnabled()) {
-								tracer.info("Replicating mapping of outgoing dialog handle "+dw.getActivityHandle()+" to remote tag "+d.getRemoteTag());
-							}
-						}
-					}
 				}																
 			}
 		}
@@ -634,74 +572,19 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		final ClientTransaction ct = responseEventExt.getClientTransaction();
 		if (ct == null) {
 			// no client tx
-			if (!inLocalMode()) {
-				// ok, it may be a RTR sent to a cluster node after orig node went down
-				if (dw != null) {
-					// the dialog exists, thus confirmed, ignore the fact that there is no client tx
-					event = new ResponseEventWrapper(this.providerWrapper, null, dw, response);
-					eventType = eventIdCache.getEventId(eventLookupFacility, response);
-					handle = dw.getActivityHandle();
-					address = dw.getEventFiringAddress();						
-				}
-				else {
-					// no dialog in stack, at most it was a unconfirmed dialog, lets end the related activity if exists
-					final String localTag = ((FromHeader) response.getHeader(FromHeader.NAME)).getTag();
-					if (localTag != null) {
-						// looks suspicious, we have a local tag, maybe it was a unconfirmed dialog, lets try to end the related activity
-						// first lets search for a fork with full dialog id
-						final SIPResponse sipResponse = (SIPResponse) response;
-						final String dialogId = sipResponse.getDialogId(false);
-						handle = new DialogWithIdActivityHandle(dialogId);
-						try {
-							if (sleeEndpoint.replicatedActivityExists(handle)) {
-								sleeEndpoint.endReplicatedActivity(handle);
-							}
-							else {
-								// ok now we search for an original dialog without id
-								final String callId = ((CallIdHeader) response.getHeader(CallIdHeader.NAME)).getCallId();
-								handle = new DialogWithoutIdActivityHandle(callId, localTag);
-								if (sleeEndpoint.replicatedActivityExists(handle)) {
-									sleeEndpoint.endReplicatedActivity(handle);
-								}
-							}
-						}
-						catch (UnrecognizedActivityHandleException e) {
-							if (tracer.isFineEnabled()) {
-								tracer.fine("failed to end client tx dialog "+handle+" that was not confirmed, probably from a dead node",e);
-							}
-						}
-						catch (Exception e) {
-							tracer.severe("failed to end client tx dialog "+handle+" that was not confirmed, probably from a dead node",e);
-						}
-						// and ack and bye if it's dialog confirmation
-						if (isDialogConfirmation(response)) {
-							processLateDialogFork2xxResponse(response,null);
-						}
-					}
-					else {
-						if (tracer.isInfoEnabled()) {
-							tracer.info("Received response not forked, without tx, without dialog, can't proceed, dropping...");
-						}
-					}
-					return;
-				}				
-			}
-			else {
-				// no cluster
-				if (dw != null) {
-					// the dialog exists, thus confirmed, ignore the fact that there is no client tx
-					event = new ResponseEventWrapper(this.providerWrapper, null, dw, response);
-					eventType = eventIdCache.getEventId(eventLookupFacility, response);
-					handle = dw.getActivityHandle();
-					address = dw.getEventFiringAddress();
-				}
-				else {
-					if (tracer.isInfoEnabled()) {
-						tracer.info("Received response not forked, without tx, without dialog, can't proceed, dropping...");
-					}
-					return;
-				}					
-			}
+		    if (dw != null) {
+		        // the dialog exists, thus confirmed, ignore the fact that there is no client tx
+		        event = new ResponseEventWrapper(this.providerWrapper, null, dw, response);
+		        eventType = eventIdCache.getEventId(eventLookupFacility, response);
+		        handle = dw.getActivityHandle();
+		        address = dw.getEventFiringAddress();
+		    }
+		    else {
+		        if (tracer.isInfoEnabled()) {
+		            tracer.info("Received response not forked, without tx, without dialog, can't proceed, dropping...");
+		        }
+		        return;
+		    }					
 		}
 		else {
 			// ct found 
@@ -1240,15 +1123,10 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		try {
 			final Properties properties = prepareRaProperties();
 			this.sipFactory = SipFactory.getInstance();
-			this.sipFactory.setPathName("org.mobicents.ha");
-			this.sipStack = (ClusteredSipStack) this.sipFactory.createSipStack(properties);
+			this.sipFactory.setPathName("org.mobicents.ext");
+			this.sipStack = (SipStackImpl) this.sipFactory.createSipStack(properties);
 			this.sipStack.start();
-			if (inLocalMode()) {
-				activityManagement = new LocalSipActivityManagement();
-			}
-			else {
-				activityManagement = new ClusteredSipActivityManagement(sipStack,ftRaContext.getReplicateData(true),raContext.getSleeTransactionManager(),this); 
-			}
+			this.activityManagement = new LocalSipActivityManagement();
 
 			if (tracer.isFineEnabled()) {
 				tracer
@@ -1332,29 +1210,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		properties.setProperty(STACK_NAME_BIND, raContext.getEntityName());
 		properties.setProperty(TRANSPORTS_BIND, transportsProperty);
 		properties.setProperty(SIP_PORT_BIND, Integer.toString(this.port));
-		if (sipBalancerHeartBeatServiceClassName != null) {
-			properties.setProperty(LOAD_BALANCER_HEART_BEAT_SERVICE_CLASS, sipBalancerHeartBeatServiceClassName);
-		}
-		if (balancers != null) {
-			properties.setProperty(BALANCERS, balancers);
-		}
-		if (loadBalancerElector != null) {
-			properties.setProperty(LoadBalancerElector.IMPLEMENTATION_CLASS_NAME_PROPERTY, loadBalancerElector);
-		}
-		// define impl of the cache  of the HA stack
-		if (cacheClassName != null) {
-			properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY, cacheClassName);
-		} else {
-			if (properties.getProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY) == null) {
-				if (tracer.isFineEnabled()) {
-					tracer.fine(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY +
-							" not set (sipra.properties). Using default cache class: "
-							+ SipResourceAdaptorMobicentsSipCache.class.getName());
-				}
-				properties.setProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY,
-						SipResourceAdaptorMobicentsSipCache.class.getName());
-			}
-		}
+		
 		if (sipTraceLevel != null) {
             properties.setProperty(SIP_TRACE_LEVEL, sipTraceLevel);
         }
@@ -1516,7 +1372,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
         try {
             Set<String> oldTransports = new HashSet<String>(this.transports);
             raConfigure(properties);
-            addNewRemoveOldTransports(oldTransports, this.transports);
         } catch (Throwable ex) {
             String msg = "error while updating RA configuration";
             tracer.severe(msg, ex);
@@ -1524,41 +1379,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
         }
     }
     
-    private void addNewRemoveOldTransports(Set<String> oldTransports, Set<String> newTransports) throws ObjectInUseException, TransportAlreadySupportedException, TransportNotSupportedException, InvalidArgumentException {
-        for(String newTransport : newTransports) {
-            if(!oldTransports.contains(newTransport)) {
-                addListeningPoint(newTransport);
-            }
-        }
-        for(String oldTransport : oldTransports) {
-            if(!newTransports.contains(oldTransport)) {
-                removeListeningPoint(oldTransport);
-            }
-        }
-    }
-    
-    private void addListeningPoint(String transport) throws TransportNotSupportedException, InvalidArgumentException, ObjectInUseException, TransportAlreadySupportedException {
-        ListeningPoint lp = this.sipStack.createListeningPoint(
-                this.stackAddress, this.port, transport);
-        this.provider.addListeningPoint(lp);
-        LoadBalancerHeartBeatingService lbHeartbeatingService = this.sipStack.getLoadBalancerHeartBeatingService();
-        if(lbHeartbeatingService != null) {
-            lbHeartbeatingService.addSipConnector(lp); 
-        }
-    }
-    
-    private void removeListeningPoint(String transport) throws ObjectInUseException {
-        ListeningPoint lp = this.provider.getListeningPoint(transport);
-        if(lp != null) {
-            this.provider.removeListeningPoint(lp);
-            this.sipStack.deleteListeningPoint(lp);
-            LoadBalancerHeartBeatingService lbHeartbeatingService = this.sipStack.getLoadBalancerHeartBeatingService();
-            if(lbHeartbeatingService != null) {
-                lbHeartbeatingService.removeSipConnector(lp);
-            }
-        }
-    }
-	
 	/*
 	 * (non-Javadoc)
 	 * @see javax.slee.resource.ResourceAdaptor#raConfigure(javax.slee.resource.ConfigProperties)
@@ -1570,33 +1390,11 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		}
 		
 		this.port = (Integer) properties.getProperty(SIP_PORT_BIND).getValue();
-
-		Property cacheClassNameProp = properties.getProperty(ClusteredSipStack.CACHE_CLASS_NAME_PROPERTY);
-		if (cacheClassNameProp != null) {
-			this.cacheClassName = (String) cacheClassNameProp.getValue();
-		}
-
 		this.stackAddress = (String) properties.getProperty(SIP_BIND_ADDRESS).getValue();
 		if (this.stackAddress.equals("")) {
 			this.stackAddress = System.getProperty("jboss.bind.address");				
 		}
 
-		this.balancers = (String) properties.getProperty(BALANCERS).getValue();
-		if (this.balancers.equals("")) {
-			this.balancers = null;
-		}
-		else {
-			this.sipBalancerHeartBeatServiceClassName = (String) properties.getProperty(LOAD_BALANCER_HEART_BEAT_SERVICE_CLASS).getValue();
-			if (this.sipBalancerHeartBeatServiceClassName.equals("")) {
-				throw new IllegalArgumentException("invalid "+LOAD_BALANCER_HEART_BEAT_SERVICE_CLASS+" property value");				
-			}
-		}
-				
-		this.loadBalancerElector = (String) properties.getProperty(LoadBalancerElector.IMPLEMENTATION_CLASS_NAME_PROPERTY).getValue();
-		if (this.loadBalancerElector.equals("")) {
-			this.loadBalancerElector = null;				
-		}
-		
 		this.transportsProperty = (String) properties.getProperty(TRANSPORTS_BIND).getValue();
 		this.transports.clear();
 		for (String transport : this.transportsProperty.split(",")) {
@@ -1633,9 +1431,6 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		this.port = -1;
 		this.stackAddress = null;
 		this.transports.clear();
-		this.balancers = null;
-		this.loadBalancerElector = null;
-		this.sipBalancerHeartBeatServiceClassName= null;
 	}
 	
 	/*
@@ -1678,19 +1473,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 			if (!validTransports) {
 				throw new IllegalArgumentException(TRANSPORTS_BIND+" config property with invalid value: "+transports);
 			}
-			// get balancer heart beat class name
-			String sipBalancerHeartBeatServiceClassName = (String) properties.getProperty(LOAD_BALANCER_HEART_BEAT_SERVICE_CLASS).getValue();
-			if (!sipBalancerHeartBeatServiceClassName.equals("")) {
-				// check class is available
-				Class.forName(sipBalancerHeartBeatServiceClassName);				
-			}
-			// get balancer elector class name
-			String sipBalancerElectorClassName = (String) properties.getProperty(LoadBalancerElector.IMPLEMENTATION_CLASS_NAME_PROPERTY).getValue();
-			if (!sipBalancerElectorClassName.equals("")) {
-				// check class is available
-				Class.forName(sipBalancerElectorClassName);				
-			}
-
+			
 			// verify existence of sipra.properties file
 			if (sipRaPropertiesLocation!=null) {
 				File f = new File(sipRaPropertiesLocation);
@@ -1855,11 +1638,7 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 		final SipActivityHandle handle = (SipActivityHandle) arg0;
 		final Wrapper activity = activityManagement.get(handle);
 		if (activity == null || activity.isEnding()) {
-			if (!inLocalMode() && handle.isReplicated()) {
-				sleeEndpoint.endReplicatedActivity(handle);
-			} else {
-				sleeEndpoint.endActivity(handle);
-			}
+		    sleeEndpoint.endActivity(handle);
 		}		
 	}
 	
@@ -1905,45 +1684,5 @@ public class SipResourceAdaptor implements SipListenerExt,FaultTolerantResourceA
 	 */
 	public boolean disableSequenceNumberValidation() {
 		return looseDialogSeqValidation;
-	}
-
-
-	// CLUSTERING
-	
-	/**
-	 * Indicates if the RA is running in local mode or in a clustered environment
-	 * @return true if the RA is running in local mode, false if is running in a clustered environment
-	 */
-	public boolean inLocalMode() {
-		return sipStack.getSipCache().inLocalMode();
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptor#dataRemoved(java.io.Serializable)
-	 */
-	public void dataRemoved(SipActivityHandle handle) {
-		// if we get this callback ensure the handle is removed from activity management, or a leak could occurr
-		// if the handle was used locally but removed remotely
-		activityManagement.remove(handle);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see org.mobicents.slee.resource.cluster.FaultTolerantResourceAdaptor#failOver(java.io.Serializable)
-	 */
-	public void failOver(SipActivityHandle activityHandle) {
-		// not used
-	}
-	
-	private FaultTolerantResourceAdaptorContext<SipActivityHandle, String> ftRaContext;
-	
-	public void setFaultTolerantResourceAdaptorContext(
-			FaultTolerantResourceAdaptorContext<SipActivityHandle, String> context) {
-		this.ftRaContext = context;
-	}
-	
-	public void unsetFaultTolerantResourceAdaptorContext() {
-		this.ftRaContext = null;
 	}
 }

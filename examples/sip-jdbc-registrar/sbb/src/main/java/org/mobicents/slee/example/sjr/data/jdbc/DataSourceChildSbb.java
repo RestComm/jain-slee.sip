@@ -24,7 +24,6 @@ package org.mobicents.slee.example.sjr.data.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 import javax.sip.header.ContactHeader;

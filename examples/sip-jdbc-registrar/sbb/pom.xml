@@ -20,6 +20,11 @@
 			<groupId>org.mobicents.resources</groupId>
 		</dependency>
 		<dependency>
+			<groupId>org.mobicents.servers.jainslee.core</groupId>
+			<artifactId>spi</artifactId>
+			<version>${restcomm.jain.slee.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.mobicents.servers.jainslee.api</groupId>
 			<artifactId>jain-slee-11-ext</artifactId>
 			<!--<version>${project.version}</version>-->

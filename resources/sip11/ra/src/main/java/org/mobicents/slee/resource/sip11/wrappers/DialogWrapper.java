@@ -64,6 +64,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.concurrent.ConcurrentHashMap;
@@ -190,7 +192,7 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 		final ClientTransactionWrapper ctw = (ClientTransactionWrapper) ct;
 		final String associatedServerTransactionId = ctw.getAssociatedServerTransactionId();
 		if (associatedServerTransactionId != null) {
-			SIPServerTransaction st = (SIPServerTransaction) ra.getProviderWrapper().getClusteredSipStack().findTransaction(associatedServerTransactionId, true);
+			SIPServerTransaction st = (SIPServerTransaction) ra.getProviderWrapper().getSipStackImpl().findTransaction(associatedServerTransactionId, true);
 			return (ServerTransaction) ra.getTransactionWrapper(st);
 		}
 		else {
@@ -203,16 +205,7 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 	 * @see javax.sip.Dialog#createRequest(java.lang.String)
 	 */
 	public Request createRequest(String methodName) throws SipException {
-		try{
-			final Request request = this.wrappedDialog.createRequest(methodName);
-			if (getState() == null) {
-				// adds load balancer to route if exists
-				ra.getProviderWrapper().addLoadBalancerToRoute(request);
-			}
-			return request;
-		}catch (Exception e) {
-			throw new SipException(e.getMessage(),e);
-		}
+	    return this.wrappedDialog.createRequest(methodName);
 	}
 	
 	/*
@@ -292,8 +285,6 @@ public class DialogWrapper extends Wrapper implements DialogActivity {
 					}
 				}
 			}
-			// adds load balancer to route if exists
-			ra.getProviderWrapper().addLoadBalancerToRoute(request);
 		}
 		else {
 			// replace route in orig request with the one in dialog
