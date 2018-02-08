@@ -69,10 +69,9 @@ import net.java.slee.resource.sip.CancelRequestEvent;
 import net.java.slee.resource.sip.DialogActivity;
 import net.java.slee.resource.sip.SleeSipProvider;
 
-import org.mobicents.ha.javax.sip.ClusteredSipStack;
-import org.mobicents.ha.javax.sip.LoadBalancerElector;
 import org.mobicents.slee.resource.sip11.wrappers.ClientTransactionWrapper;
 import org.mobicents.slee.resource.sip11.wrappers.DialogWrapper;
+import org.mobicents.ext.javax.sip.SipStackImpl;
 import org.mobicents.slee.resource.sip11.wrappers.ClientDialogWrapper;
 import org.mobicents.slee.resource.sip11.wrappers.ServerTransactionWrapper;
 
@@ -87,7 +86,7 @@ public class SleeSipProviderImpl implements SleeSipProvider {
 	protected AddressFactory addressFactory = null;
 	protected HeaderFactory headerFactory = null;
 	protected MessageFactory messageFactory = null;
-	protected ClusteredSipStack stack = null;
+	protected SipStackImpl stack = null;
 	protected SipResourceAdaptor ra = null;
 	protected SipProvider provider = null;
 	protected final Tracer tracer;
@@ -100,7 +99,7 @@ public class SleeSipProviderImpl implements SleeSipProvider {
 	
 	public void raActive(AddressFactory addressFactory,
 			HeaderFactory headerFactory, MessageFactory messageFactory,
-			ClusteredSipStack stack,SipProvider provider) {		
+			SipStackImpl stack,SipProvider provider) {		
 		this.addressFactory = addressFactory;
 		this.headerFactory = headerFactory;
 		this.messageFactory = messageFactory;
@@ -421,13 +420,6 @@ public class SleeSipProviderImpl implements SleeSipProvider {
 			throws TransactionUnavailableException {
 		
 		checkState();
-		// add load balancer to route if it is configured
-		try {
-			addLoadBalancerToRoute(request);
-		} catch (SipException e) {
-			throw new TransactionUnavailableException("Failed to add load balancer to route",e);
-		}
-		
 		final SIPClientTransaction ct = (SIPClientTransaction) provider.getNewClientTransaction(request);
 		final ClientTransactionWrapper ctw = new ClientTransactionWrapper(ct,
 				ra);
@@ -704,29 +696,7 @@ public class SleeSipProviderImpl implements SleeSipProvider {
 		throw new UnsupportedOperationException();
 	}
 	
-	/**
-	 * @return the stack
-	 */
-	public ClusteredSipStack getClusteredSipStack() {
-		return stack;
-	}
-
-	/**
-	 * 
-	 * @param r
-	 * @throws SipException
-	 */
-	@SuppressWarnings("deprecation")
-	public void addLoadBalancerToRoute(Request r) throws SipException {
-		LoadBalancerElector loadBalancerElector = stack.getLoadBalancerElector();
-		if (loadBalancerElector != null) {
-			Address lbAddress = loadBalancerElector.getLoadBalancer();
-			if (lbAddress == null) {
-				return;
-			}
-			lbAddress = (Address) loadBalancerElector.getLoadBalancer().clone();
-			((SipURI)lbAddress.getURI()).setLrParam();
-			r.addFirst(headerFactory.createRouteHeader(lbAddress));
-		}
+	public SipStackImpl getSipStackImpl() {
+	    return this.stack;
 	}
 }

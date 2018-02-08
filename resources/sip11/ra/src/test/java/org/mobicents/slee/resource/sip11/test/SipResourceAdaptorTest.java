@@ -1,30 +1,33 @@
 package org.mobicents.slee.resource.sip11.test;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mobicents.ext.javax.sip.SipStackImpl;
-import org.mobicents.ha.javax.sip.ClusteredSipStack;
-import org.mobicents.slee.resource.sip11.SipResourceAdaptor;
-import org.mobicents.slee.resource.sip11.SleeSipProviderImpl;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.reflect.Whitebox;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import javax.sip.ListeningPoint;
-import javax.sip.SipFactory;
 import javax.slee.facilities.Tracer;
 import javax.slee.resource.ConfigProperties;
 import javax.slee.resource.ConfigProperties.Property;
 import javax.slee.resource.InvalidConfigurationException;
 import javax.slee.resource.ResourceAdaptorContext;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Iterator;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mobicents.ext.javax.sip.SipStackImpl;
+import org.mobicents.slee.resource.sip11.SipResourceAdaptor;
+import org.mobicents.slee.resource.sip11.SleeSipProviderImpl;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.powermock.reflect.Whitebox;
 
 
 public class SipResourceAdaptorTest {
@@ -146,7 +149,7 @@ public class SipResourceAdaptorTest {
 		ra2.raActive();
 
 		// verify RA1 stack
-		ClusteredSipStack stack1 = Whitebox.getInternalState(ra1, "sipStack");
+		SipStackImpl stack1 = Whitebox.getInternalState(ra1, "sipStack");
 		Assert.assertEquals(raContext1.getEntityName(),stack1.getStackName());
 
 		// verify that RA1 - stack is listening on a port used in configuration
@@ -157,7 +160,7 @@ public class SipResourceAdaptorTest {
 		}
 
 		// verify RA2 stack
-		ClusteredSipStack stack2 = Whitebox.getInternalState(ra2, "sipStack");
+		SipStackImpl stack2 = Whitebox.getInternalState(ra2, "sipStack");
 		Assert.assertEquals(raContext2.getEntityName(),stack2.getStackName());
 
 		// verify that RA2 - stack is listening on a port used in configuration
@@ -245,11 +248,11 @@ public class SipResourceAdaptorTest {
 		ra.raActive();
 
 		// get created sip stack
-		ClusteredSipStack stack = Whitebox.getInternalState(ra, "sipStack");
+		SipStackImpl stack = Whitebox.getInternalState(ra, "sipStack");
 
 		// expect values as provided in sample properties file
-		assertEquals("ConfirmedDialog",stack.getReplicationStrategy().toString());
-		assertEquals("org.mobicents.ha.javax.sip.cache.NoCache",stack.getSipCache().getClass().getName());
+		//assertEquals("ConfirmedDialog",stack.getReplicationStrategy().toString());
+		//assertEquals("org.mobicents.ha.javax.sip.cache.NoCache",stack.getSipCache().getClass().getName());
 
 		SipStackImpl impl = ((org.mobicents.ext.javax.sip.SipStackImpl) stack);
 		assertEquals(true,impl.isSendTryingRightAway());
@@ -289,10 +292,10 @@ public class SipResourceAdaptorTest {
 		ra.raActive();
 
 		// get created sip stack
-		ClusteredSipStack stack = Whitebox.getInternalState(ra, "sipStack");
+		SipStackImpl stack = Whitebox.getInternalState(ra, "sipStack");
 
 		// expect values as provided in sample properties file
-		assertEquals("EarlyDialog",stack.getReplicationStrategy().toString());
+		//assertEquals("EarlyDialog",stack.getReplicationStrategy().toString());
 		SipStackImpl impl = ((org.mobicents.ext.javax.sip.SipStackImpl) stack);
 		assertEquals(false,impl.isSendTryingRightAway());
 

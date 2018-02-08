@@ -22,10 +22,6 @@
             <scope>test</scope>			
         </dependency>	
         <dependency>
-            <groupId>org.mobicents.servers.jainslee.core</groupId>
-            <artifactId>fault-tolerant-ra-api</artifactId>			
-        </dependency>
-        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
         </dependency>

@@ -14,11 +14,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>${project.parent.groupId}</groupId>
-			<artifactId>sip11-jain-sip-ha</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>javax.sip</groupId>
 			<artifactId>jain-sip-api</artifactId>
 		</dependency>
@@ -26,27 +21,9 @@
 			<groupId>javax.sip</groupId>
 			<artifactId>jain-sip-ri</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.mobicents.ha.javax.sip</groupId> <artifactId>restcomm-jain-sip-jboss5</artifactId> 
-			</dependency> -->
-		<dependency>
-			<groupId>org.mobicents.ha.javax.sip</groupId>
-			<artifactId>restcomm-jain-sip-wildfly10</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.ha.javax.sip</groupId>
-			<artifactId>restcomm-jain-sip-ha-core</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.mobicents.javax.sip</groupId>
 			<artifactId>restcomm-jain-sip-ext</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.tools</groupId>
-			<artifactId>sip-balancer-jar</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mobicents.tools</groupId>
-			<artifactId>heartbeat-api</artifactId>
 		</dependency>
 	</dependencies>
 

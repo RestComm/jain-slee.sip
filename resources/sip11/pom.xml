@@ -14,7 +14,6 @@
     <name>Restcomm :: Resources :: ${project.artifactId}</name>
 
     <modules>
-        <module>jain-sip-ha</module>
         <module>library</module>
         <module>events</module>
         <module>ratype</module>
@@ -41,34 +40,11 @@
                 <artifactId>restcomm-jain-sip-ext</artifactId>
                 <version>${restcomm.jain.sip.ext.version}</version>
             </dependency>
-            <!--
-            <dependency>
-                <groupId>org.mobicents.ha.javax.sip</groupId>
-                <artifactId>restcomm-jain-sip-jboss5</artifactId>
-                <version>${restcomm.jain.sip.ha.version}</version>
-            </dependency>
-            -->
-            <dependency>
-                <groupId>org.mobicents.ha.javax.sip</groupId>
-                <artifactId>restcomm-jain-sip-wildfly10</artifactId>
-                <version>${restcomm.jain.sip.ha.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mobicents.ha.javax.sip</groupId>
-                <artifactId>restcomm-jain-sip-ha-core</artifactId>
-                <version>${restcomm.jain.sip.ha.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mobicents.servers.jainslee.core</groupId>
-                <artifactId>fault-tolerant-ra-api</artifactId>
-                <version>${restcomm.jain.slee.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.mobicents.servers.jainslee.core</groupId>
                 <artifactId>spi</artifactId>
                 <version>${restcomm.jain.slee.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.restcomm.cluster</groupId>
                 <artifactId>cache</artifactId>
@@ -80,17 +56,6 @@
                 <artifactId>core</artifactId>
                 <version>${restcomm.cluster.version}</version>
                 <scope>provided</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>org.mobicents.tools</groupId>
-                <artifactId>sip-balancer-jar</artifactId>
-                <version>${restcomm.loadbalancer.version}</version>			
-            </dependency>
-            <dependency>
-                <groupId>org.mobicents.tools</groupId>
-                <artifactId>heartbeat-api</artifactId>
-                <version>${restcomm.loadbalancer.version}</version>			
             </dependency>
         </dependencies>
     </dependencyManagement>

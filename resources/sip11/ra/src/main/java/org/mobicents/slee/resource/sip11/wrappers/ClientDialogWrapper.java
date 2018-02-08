@@ -440,10 +440,6 @@ public class ClientDialogWrapper extends DialogWrapper {
 		else {
 			request = super.createRequest(methodName);
 		}
-		if (getState() == null) {
-			// adds load balancer to route if exists
-			ra.getProviderWrapper().addLoadBalancerToRoute(request);
-		}
 		return request;
 	}
 	
