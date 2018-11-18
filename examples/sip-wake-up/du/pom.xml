@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>restcomm-slee-example-sip-wake-up</artifactId>
 		<groupId>org.mobicents.examples</groupId>
-		<version>7.0.0-SNAPSHOT</version>
+		<version>7.2.0-172</version>
 	</parent>
 	
 	<artifactId>restcomm-sip-wake-up-DU</artifactId>
