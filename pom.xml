@@ -10,14 +10,14 @@
 
 	<groupId>org.mobicents.servers.jainslee.sip</groupId>
 	<artifactId>restcomm-slee-sip</artifactId>
-	<version>7.0.0-SNAPSHOT</version>
+	<version>7.2.0-189</version>
 
 	<packaging>pom</packaging>
 
 	<properties>
-		<restcomm.jain.slee.version>7.1.82</restcomm.jain.slee.version>
-		<restcomm.jain.slee.jdbc.version>7.1.15</restcomm.jain.slee.jdbc.version>
-		<restcomm.cluster.version>7.0.0.16</restcomm.cluster.version>
+		<restcomm.jain.slee.version>7.2.0-177</restcomm.jain.slee.version>
+		<restcomm.jain.slee.jdbc.version>7.2.0-175</restcomm.jain.slee.jdbc.version>
+		<restcomm.cluster.version>3.0.1-182</restcomm.cluster.version>
 		<restcomm.jain.sip.ext.version>1.3.26</restcomm.jain.sip.ext.version>
 		<maven.du.plugin.wildfly.version>4.0.2</maven.du.plugin.wildfly.version>
 	</properties>
